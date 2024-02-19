@@ -1,5 +1,5 @@
 const colors = {
-  own: "#009FE3",
+  own: "#38ACE4",
   backgroundPrimary: "#C9EEF7",
   borderPrimary: "#009BDC",
 
