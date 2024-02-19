@@ -1,10 +1,48 @@
 "use client";
-import { Skeleton, Text } from "@chakra-ui/react";
+import { Skeleton, Box } from "@chakra-ui/react";
 import { useAuth } from "@/app/libs/AuthProvider";
+import ButtonCustom from "./componets/buttons/ButtonCustom";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const { loading, user } = useAuth();
+  const router = useRouter();
+
+  const handleOption = (option) => {
+    console.log(option);
+
+    router.push(`/${option}`);
+  };
 
   if (loading) return <Skeleton height="100vh" />;
-  return <Text mt={10}>Template for a Next.js app with Chakra UI and Directus</Text>;
+  return (
+    <Box
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      height="50vh"
+      flexDirection="column"
+      gap={8}
+    >
+      <ButtonCustom
+        onClick={() => {
+          handleOption("reloj");
+        }}
+      >
+        RELOJ
+      </ButtonCustom>
+      <ButtonCustom
+        onClick={() => {
+          handleOption("parte");
+        }}
+      
+      >PARTE</ButtonCustom>
+      <ButtonCustom
+        onClick={() => {
+          handleOption("vale");
+        }}
+      
+      >VALE</ButtonCustom>
+    </Box>
+  );
 }

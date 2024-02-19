@@ -19,7 +19,7 @@ export default function UsserSettingsPage() {
   if (loading) return <SkeletonCircle size="10" />;
 
   return (
-    <Box mt={10}>
+    <Box>
       <Flex alignItems="center" justifyContent="center" flexDirection="column">
         <Avatar size={"md"} name={name} />
         <Text fontSize="lg" fontWeight="bold" color="gray.600" ml="4">
