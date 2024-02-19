@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "env": {
+    "DIRECTUS_URL": "http://192.168.43.25:25001"
+  }
+}
