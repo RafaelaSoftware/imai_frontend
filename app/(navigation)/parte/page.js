@@ -7,14 +7,18 @@ import ButtonCustom from "@/app/componets/buttons/ButtonCustom";
 import { useAuth } from "@/app/libs/AuthProvider";
 import { useRef, useEffect } from "react";
 import useCustomToast from "@/app/hooks/useCustomToast";
+import { isValidData } from "@/app/libs/utils";
 
 export default function PartePage() {
   const { directus, createItem } = useAuth();
   const { showToast } = useCustomToast();
 
   const inputRefEmpleado = useRef(null);
+  const inputRefEmpleadoDescripcion = useRef(null);
   const inputRefOrdenProduccion = useRef(null);
+  const inputRefOrdenProduccionDescripcion = useRef(null);
   const inputRefTarea = useRef(null);
+  const inputRefTareaDescripcion = useRef(null);
 
   const handleSubmit = async (values) => {
     console.log(values);
@@ -37,27 +41,62 @@ export default function PartePage() {
     inputRefEmpleado.current.value = "";
     inputRefOrdenProduccion.current.value = "";
     inputRefTarea.current.value = "";
+
+    inputRefEmpleadoDescripcion.current.innerText = "";
+    inputRefOrdenProduccionDescripcion.current.innerText = "";
+    inputRefTareaDescripcion.current.innerText = "";
   };
 
   useEffect(() => {
     inputRefEmpleado.current.focus();
   }, []);
 
-  const handleEnter = (event) => {
+  const handleEnter = async (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
       event.stopPropagation();
 
       if (event.target === inputRefEmpleado.current) {
-        inputRefOrdenProduccion.current.focus();
+        const result = await isValidData(
+          "empleado",
+          inputRefEmpleado.current.value
+        );
+        if (result.isValid) {
+          inputRefEmpleadoDescripcion.current.innerText = result.description;
+          inputRefOrdenProduccion.current.focus();
+        } else {
+          inputRefEmpleado.current.value = "";
+          inputRefEmpleadoDescripcion.current.innerText = "";
+          showToast("Error", result.description, "error");
+        }
       } else if (event.target === inputRefOrdenProduccion.current) {
-        inputRefTarea.current.focus();
+        const result = await isValidData(
+          "ordenproduccion",
+          inputRefOrdenProduccion.current.value
+        );
+        if (result.isValid) {
+          inputRefOrdenProduccionDescripcion.current.innerText =
+            result.description;
+          inputRefTarea.current.focus();
+        } else {
+          inputRefOrdenProduccion.current.value = "";
+          inputRefOrdenProduccionDescripcion.current.innerText = "";
+          showToast("Error", result.description, "error");
+        }
       } else if (event.target === inputRefTarea.current) {
-        handleSubmit({
-          empleado: inputRefEmpleado.current.value,
-          ordenproduccion: inputRefOrdenProduccion.current.value,
-          tarea: inputRefTarea.current.value,
-        });
+        const result = await isValidData("tarea", inputRefTarea.current.value);
+        if (result.isValid) {
+          inputRefTareaDescripcion.current.innerText = result.description;
+          handleSubmit({
+            empleado: inputRefEmpleado.current.value,
+            ordenproduccion: inputRefOrdenProduccion.current.value,
+            tarea: inputRefTarea.current.value,
+          });
+        } else {
+          inputRefTarea.current.value = "";
+          inputRefTareaDescripcion.current.innerText = "";
+          showToast("Error", result.description, "error");
+        }
       }
     }
   };
@@ -86,6 +125,7 @@ export default function PartePage() {
           borderColor="#C0C0C0"
           onKeyDown={handleEnter}
         />
+        <Text ref={inputRefEmpleadoDescripcion}></Text>
 
         <Input
           as={Input}
@@ -102,6 +142,7 @@ export default function PartePage() {
           borderColor="#C0C0C0"
           onKeyDown={handleEnter}
         />
+        <Text ref={inputRefOrdenProduccionDescripcion}></Text>
 
         <Input
           as={Input}
@@ -118,6 +159,7 @@ export default function PartePage() {
           borderColor="#C0C0C0"
           onKeyDown={handleEnter}
         />
+        <Text ref={inputRefTareaDescripcion}></Text>
 
         <ButtonCustom
           onClick={() => {

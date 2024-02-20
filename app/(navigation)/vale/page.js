@@ -7,14 +7,18 @@ import ButtonCustom from "@/app/componets/buttons/ButtonCustom";
 import { useAuth } from "@/app/libs/AuthProvider";
 import { useRef, useEffect } from "react";
 import useCustomToast from "@/app/hooks/useCustomToast";
+import { isValidData } from "@/app/libs/utils";
 
 export default function ValePage() {
   const { directus, createItem } = useAuth();
   const { showToast } = useCustomToast();
 
   const inputRefEmpleado = useRef(null);
+  const inputRefEmpleadoDescripcion = useRef(null);
   const inputRefOrdenProduccion = useRef(null);
+  const inputRefOrdenProduccionDescripcion = useRef(null);
   const inputRefProducto = useRef(null);
+  const inputRefProductoDescripcion = useRef(null);
   const inputRefCantidad = useRef(null);
 
   const handleSubmit = async (values) => {
@@ -32,25 +36,63 @@ export default function ValePage() {
     } catch (error) {
       showToast("Error", "No se pudo crear el vale", "error");
     }
-    
+
     inputRefEmpleado.current.focus();
     inputRefEmpleado.current.value = "";
     inputRefOrdenProduccion.current.value = "";
     inputRefProducto.current.value = "";
     inputRefCantidad.current.value = "";
+
+    inputRefEmpleadoDescripcion.current.innerText = "";
+    inputRefOrdenProduccionDescripcion.current.innerText = "";
+    inputRefProductoDescripcion.current.innerText = "";
   };
 
-  const handleEnter = (event) => {
+  const handleEnter = async (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
       event.stopPropagation();
 
       if (event.target === inputRefEmpleado.current) {
-        inputRefOrdenProduccion.current.focus();
+        const result = await isValidData(
+          "empleado",
+          inputRefEmpleado.current.value
+        );
+        if (result.isValid) {
+          inputRefEmpleadoDescripcion.current.innerText = result.description;
+          inputRefOrdenProduccion.current.focus();
+        } else {
+          inputRefEmpleado.current.value = "";
+          inputRefEmpleadoDescripcion.current.innerText = "";
+          showToast("Error", result.description, "error");
+        }
       } else if (event.target === inputRefOrdenProduccion.current) {
-        inputRefProducto.current.focus();
+        const result = await isValidData(
+          "ordenproduccion",
+          inputRefOrdenProduccion.current.value
+        );
+        if (result.isValid) {
+          inputRefOrdenProduccionDescripcion.current.innerText = 
+            result.description;
+          inputRefProducto.current.focus();
+        } else {
+          inputRefOrdenProduccion.current.value = "";
+          inputRefOrdenProduccionDescripcion.current.innerText = "";
+          showToast("Error", result.description, "error");
+        }
       } else if (event.target === inputRefProducto.current) {
-        inputRefCantidad.current.focus();
+        const result = await isValidData(
+          "producto",
+          inputRefProducto.current.value
+        );
+        if (result.isValid) {
+          inputRefProductoDescripcion.current.innerText = result.description;
+          inputRefCantidad.current.focus();
+        } else {
+          inputRefProducto.current.value = "";
+          inputRefProductoDescripcion.current.innerText = "";
+          showToast("Error", result.description, "error");
+        }
       } else if (event.target === inputRefCantidad.current) {
         handleSubmit({
           empleado: inputRefEmpleado.current.value,
@@ -90,6 +132,7 @@ export default function ValePage() {
           borderColor="#C0C0C0"
           onKeyDown={handleEnter}
         />
+        <Text ref={inputRefEmpleadoDescripcion}></Text>
 
         <Input
           as={Input}
@@ -106,6 +149,7 @@ export default function ValePage() {
           borderColor="#C0C0C0"
           onKeyDown={handleEnter}
         />
+        <Text ref={inputRefOrdenProduccionDescripcion}></Text>
 
         <Input
           as={Input}
@@ -122,6 +166,7 @@ export default function ValePage() {
           borderColor="#C0C0C0"
           onKeyDown={handleEnter}
         />
+        <Text ref={inputRefProductoDescripcion}></Text>
 
         <Input
           as={Input}

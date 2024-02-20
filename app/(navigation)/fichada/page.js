@@ -7,12 +7,14 @@ import ButtonCustom from "@/app/componets/buttons/ButtonCustom";
 import { useAuth } from "@/app/libs/AuthProvider";
 import { useEffect, useRef } from "react";
 import useCustomToast from "@/app/hooks/useCustomToast";
+import { isValidData } from "@/app/libs/utils";
 
 export default function FichadaPage() {
   const { directus, createItem } = useAuth();
   const { showToast } = useCustomToast();
 
   const inputRefEmpleado = useRef(null);
+  const inputRefEmpleadoDescripcion = useRef(null);
 
   const handleSubmit = async (values) => {
     console.log(values);
@@ -31,15 +33,26 @@ export default function FichadaPage() {
     inputRefEmpleado.current.value = "";
   };
 
-  const handleEnter = (event) => {
+  const handleEnter = async (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
       event.stopPropagation();
 
       if (event.target === inputRefEmpleado.current) {
-        handleSubmit({
-          empleado: inputRefEmpleado.current.value,
-        });
+        const result = await isValidData(
+          "empleado",
+          inputRefEmpleado.current.value
+        );
+        if (result.isValid) {
+          inputRefEmpleadoDescripcion.current.innerText = result.description;
+          handleSubmit({
+            empleado: inputRefEmpleado.current.value,
+          });
+        } else {
+          inputRefEmpleado.current.value = "";
+          inputRefEmpleadoDescripcion.current.innerText = "";
+          showToast("Error", result.description, "error");
+        }
       }
     }
   };
@@ -72,6 +85,7 @@ export default function FichadaPage() {
           borderColor="#C0C0C0"
           onKeyDown={handleEnter}
         />
+        <Text ref={inputRefEmpleadoDescripcion}></Text>
 
         <ButtonCustom
           onClick={() => {
