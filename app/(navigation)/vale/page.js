@@ -1,97 +1,141 @@
 // Assuming you have a user object with properties 'name' and 'lastName'
 "use client";
 
-import {
-  Text,
-  Box,
-  VStack,
-  Center
-} from "@chakra-ui/react";
-
-import { Formik } from "formik";
-import InputFormControl from "@/app/componets/inputs/InputFormControl";
+import { Text, Box, Center, Input, FormControl, Flex } from "@chakra-ui/react";
+import InputCustom from "@/app/componets/inputs/InputCustom";
 import ButtonCustom from "@/app/componets/buttons/ButtonCustom";
 
 import { useAuth } from "@/app/libs/AuthProvider";
 
+import { useRef } from "react";
+
 export default function ValePage() {
   const { directus } = useAuth();
 
+  const inputRefEmpleado = useRef(null);
+  const inputRefOrdenProduccion = useRef(null);
+  const inputRefProducto = useRef(null);
+  const inputRefCantidad = useRef(null);
+
   const handleSubmit = (values) => {
     console.log(values);
+
+    inputRefEmpleado.current.focus();
+
+    inputRefEmpleado.current.value = "";
+    inputRefOrdenProduccion.current.value = "";
+    inputRefProducto.current.value = "";
+    inputRefCantidad.current.value = "";
   };
 
-  const handleValidate = (values) => {
-    let errors = {};
+  const handleEnter = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      event.stopPropagation();
 
-    if (!values.empleado) {
-      errors.empleado = "El campo es requerido";
+      if (event.target === inputRefEmpleado.current) {
+        inputRefOrdenProduccion.current.focus();
+      } else if (event.target === inputRefOrdenProduccion.current) {
+        inputRefProducto.current.focus();
+      } else if (event.target === inputRefProducto.current) {
+        inputRefCantidad.current.focus();
+      } else if (event.target === inputRefCantidad.current) {
+        handleSubmit({
+          empleado: inputRefEmpleado.current.value,
+          ordenproduccion: inputRefOrdenProduccion.current.value,
+          producto: inputRefProducto.current.value,
+          cantidad: inputRefCantidad.current.value,
+        });
+      }
     }
-
-    if (!values.producto) {
-      errors.producto = "El campo es requerido";
-    }
-
-    if (!values.cantidad) {
-      errors.cantidad = "El campo es requerido";
-    }
-
-    return errors;
   };
 
   return (
     <Box>
       <Center>
-      <Text fontSize="lg" fontWeight="bold" 
-      >
-        VALE
-      </Text>
+        <Text fontSize="lg" fontWeight="bold">
+          VALE
+        </Text>
       </Center>
 
-      <Formik
-        initialValues={{
-          empleado: "",
-          producto: "",
-          cantidad: "",
-        }}
-        validate={handleValidate}
-        onSubmit={(values, { resetForm }) => {
-          handleSubmit(values);
-        }}
-      >
-        {({ handleSubmit, errors, touched }) => (
-          <form onSubmit={handleSubmit}>
-            <VStack spacing={4} align="flex-start">
-              <InputFormControl
-                label={"Empleado"}
-                placeholder={"Empleado"}
-                id="empleado"
-                type="text"
-                isInvalidErrors={!!errors.empleado && touched.empleado}
-                errorMessage={errors.empleado}
-              />
-              <InputFormControl
-                label={"Producto"}
-                placeholder={"Producto"}
-                id="producto"
-                type="text"
-                isInvalidErrors={!!errors.producto && touched.producto}
-                errorMessage={errors.producto}
-              />
-              <InputFormControl
-                label={"Cantidad"}
-                placeholder={"Cantidad"}
-                id="cantidad"
-                type="number"
-                isInvalidErrors={!!errors.cantidad && touched.cantidad}
-                errorMessage={errors.cantidad}  
-              />
+      <Flex gap={4} direction="column" alignItems="center">
+        <Input
+          as={Input}
+          id="empleado"
+          name="empleado"
+          type="text"
+          placeholder="Empleado"
+          ref={inputRefEmpleado}
+          variant="filled"
+          borderRadius="30"
+          size="lg"
+          bgColor="white"
+          color="#C0C0C0"
+          borderColor="#C0C0C0"
+          onKeyDown={handleEnter}
+        />
 
-              <ButtonCustom type="submit">Confirmar</ButtonCustom>
-            </VStack>
-          </form>
-        )}
-      </Formik>
+        <Input
+          as={Input}
+          id="ordenproduccion"
+          name="ordenproduccion"
+          type="text"
+          placeholder="Orden de Produccion"
+          ref={inputRefOrdenProduccion}
+          variant="filled"
+          borderRadius="30"
+          size="lg"
+          bgColor="white"
+          color="#C0C0C0"
+          borderColor="#C0C0C0"
+          onKeyDown={handleEnter}
+        />
+
+        <Input
+          as={Input}
+          id="producto"
+          name="producto"
+          type="text"
+          placeholder="Producto"
+          ref={inputRefProducto}
+          variant="filled"
+          borderRadius="30"
+          size="lg"
+          bgColor="white"
+          color="#C0C0C0"
+          borderColor="#C0C0C0"
+          onKeyDown={handleEnter}
+        />
+
+        <Input
+          as={Input}
+          id="cantidad"
+          name="cantidad"
+          type="text"
+          placeholder="Cantidad"
+          ref={inputRefCantidad}
+          variant="filled"
+          borderRadius="30"
+          size="lg"
+          bgColor="white"
+          color="#C0C0C0"
+          borderColor="#C0C0C0"
+          onKeyDown={handleEnter}
+        />
+
+        <ButtonCustom
+          onClick={() => {
+            handleSubmit({
+              empleado: inputRefEmpleado.current.value,
+              ordenproduccion: inputRefOrdenProduccion.current.value,
+              producto: inputRefProducto.current.value,
+              cantidad: inputRefCantidad.current.value,
+            });
+          }}
+        >
+          Confirmar
+        </ButtonCustom>
+      </Flex>
     </Box>
   );
 }

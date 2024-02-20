@@ -9,12 +9,10 @@ import { useAuth } from "@/app/libs/AuthProvider";
 
 import { useRef } from "react";
 
-export default function PartePage() {
+export default function FichadaPage() {
   const { directus } = useAuth();
 
   const inputRefEmpleado = useRef(null);
-  const inputRefOrdenProduccion = useRef(null);
-  const inputRefTarea = useRef(null);
 
   const handleSubmit = (values) => {
     console.log(values);
@@ -22,8 +20,6 @@ export default function PartePage() {
     inputRefEmpleado.current.focus();
 
     inputRefEmpleado.current.value = "";
-    inputRefOrdenProduccion.current.value = "";
-    inputRefTarea.current.value = "";
   };
 
   const handleEnter = (event) => {
@@ -32,14 +28,8 @@ export default function PartePage() {
       event.stopPropagation();
 
       if (event.target === inputRefEmpleado.current) {
-        inputRefOrdenProduccion.current.focus();
-      } else if (event.target === inputRefOrdenProduccion.current) {
-        inputRefTarea.current.focus();
-      } else if (event.target === inputRefTarea.current) {
         handleSubmit({
           empleado: inputRefEmpleado.current.value,
-          ordenproduccion: inputRefOrdenProduccion.current.value,
-          tarea: inputRefTarea.current.value,
         });
       }
     }
@@ -49,7 +39,7 @@ export default function PartePage() {
     <Box>
       <Center>
         <Text fontSize="lg" fontWeight="bold">
-          PARTE
+          FICHADA
         </Text>
       </Center>
 
@@ -70,44 +60,10 @@ export default function PartePage() {
           onKeyDown={handleEnter}
         />
 
-        <Input
-          as={Input}
-          id="ordenproduccion"
-          name="ordenproduccion"
-          type="text"
-          placeholder="Orden de Produccion"
-          ref={inputRefOrdenProduccion}
-          variant="filled"
-          borderRadius="30"
-          size="lg"
-          bgColor="white"
-          color="#C0C0C0"
-          borderColor="#C0C0C0"
-          onKeyDown={handleEnter}
-        />
-
-        <Input
-          as={Input}
-          id="tarea"
-          name="tarea"
-          type="text"
-          placeholder="Tarea"
-          ref={inputRefTarea}
-          variant="filled"
-          borderRadius="30"
-          size="lg"
-          bgColor="white"
-          color="#C0C0C0"
-          borderColor="#C0C0C0"
-          onKeyDown={handleEnter}
-        />
-
         <ButtonCustom
           onClick={() => {
             handleSubmit({
               empleado: inputRefEmpleado.current.value,
-              ordenproduccion: inputRefOrdenProduccion.current.value,
-              tarea: inputRefTarea.current.value,
             });
           }}
         >
