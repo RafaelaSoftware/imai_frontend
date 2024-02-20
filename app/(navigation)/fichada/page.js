@@ -4,21 +4,30 @@
 import { Text, Box, Center, Input, FormControl, Flex } from "@chakra-ui/react";
 import InputCustom from "@/app/componets/inputs/InputCustom";
 import ButtonCustom from "@/app/componets/buttons/ButtonCustom";
-
 import { useAuth } from "@/app/libs/AuthProvider";
-
 import { useEffect, useRef } from "react";
+import useCustomToast from "@/app/hooks/useCustomToast";
 
 export default function FichadaPage() {
-  const { directus } = useAuth();
+  const { directus, createItem } = useAuth();
+  const { showToast } = useCustomToast();
 
   const inputRefEmpleado = useRef(null);
 
-  const handleSubmit = (values) => {
+  const handleSubmit = async (values) => {
     console.log(values);
+    try {
+      const result = await directus.request(
+        createItem("fichada", {
+          empleado: values.empleado,
+        })
+      );
+      showToast("Notificación", "Fichada creada con éxito", "success");
+    } catch (error) {
+      showToast("Error", "No se pudo crear la fichada", "error");
+    }
 
     inputRefEmpleado.current.focus();
-
     inputRefEmpleado.current.value = "";
   };
 

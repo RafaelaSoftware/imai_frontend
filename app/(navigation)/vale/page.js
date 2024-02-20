@@ -4,24 +4,36 @@
 import { Text, Box, Center, Input, FormControl, Flex } from "@chakra-ui/react";
 import InputCustom from "@/app/componets/inputs/InputCustom";
 import ButtonCustom from "@/app/componets/buttons/ButtonCustom";
-
 import { useAuth } from "@/app/libs/AuthProvider";
-
 import { useRef, useEffect } from "react";
+import useCustomToast from "@/app/hooks/useCustomToast";
 
 export default function ValePage() {
-  const { directus } = useAuth();
+  const { directus, createItem } = useAuth();
+  const { showToast } = useCustomToast();
 
   const inputRefEmpleado = useRef(null);
   const inputRefOrdenProduccion = useRef(null);
   const inputRefProducto = useRef(null);
   const inputRefCantidad = useRef(null);
 
-  const handleSubmit = (values) => {
+  const handleSubmit = async (values) => {
     console.log(values);
-
+    try {
+      const result = await directus.request(
+        createItem("vale", {
+          empleado: values.empleado,
+          ordenProduccion: values.ordenproduccion,
+          producto: values.producto,
+          cantidad: values.cantidad,
+        })
+      );
+      showToast("Notificación", "Vale creado con éxito", "success");
+    } catch (error) {
+      showToast("Error", "No se pudo crear el vale", "error");
+    }
+    
     inputRefEmpleado.current.focus();
-
     inputRefEmpleado.current.value = "";
     inputRefOrdenProduccion.current.value = "";
     inputRefProducto.current.value = "";

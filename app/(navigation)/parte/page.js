@@ -4,23 +4,36 @@
 import { Text, Box, Center, Input, FormControl, Flex } from "@chakra-ui/react";
 import InputCustom from "@/app/componets/inputs/InputCustom";
 import ButtonCustom from "@/app/componets/buttons/ButtonCustom";
-
 import { useAuth } from "@/app/libs/AuthProvider";
-
 import { useRef, useEffect } from "react";
+import useCustomToast from "@/app/hooks/useCustomToast";
 
 export default function PartePage() {
-  const { directus } = useAuth();
+  const { directus, createItem } = useAuth();
+  const { showToast } = useCustomToast();
 
   const inputRefEmpleado = useRef(null);
   const inputRefOrdenProduccion = useRef(null);
   const inputRefTarea = useRef(null);
 
-  const handleSubmit = (values) => {
+  const handleSubmit = async (values) => {
     console.log(values);
 
-    inputRefEmpleado.current.focus();
+    try {
+      const result = await directus.request(
+        createItem("parte", {
+          empleado: values.empleado,
+          ordenProduccion: values.ordenproduccion,
+          tarea: values.tarea,
+        })
+      );
 
+      showToast("Notificación", "Parte creado con éxito", "success");
+    } catch (error) {
+      showToast("Error", "No se pudo crear el parte", "error");
+    }
+
+    inputRefEmpleado.current.focus();
     inputRefEmpleado.current.value = "";
     inputRefOrdenProduccion.current.value = "";
     inputRefTarea.current.value = "";
