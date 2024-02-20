@@ -9,8 +9,6 @@ export default function Home() {
   const router = useRouter();
 
   const handleOption = (option) => {
-    console.log(option);
-
     router.push(`/${option}`);
   };
 
@@ -26,23 +24,25 @@ export default function Home() {
     >
       <ButtonCustom
         onClick={() => {
-          handleOption("reloj");
+          handleOption("fichada");
         }}
       >
-        RELOJ
+        FICHADA
       </ButtonCustom>
       <ButtonCustom
         onClick={() => {
           handleOption("parte");
         }}
-      
-      >PARTE</ButtonCustom>
+      >
+        PARTE
+      </ButtonCustom>
       <ButtonCustom
         onClick={() => {
           handleOption("vale");
         }}
-      
-      >VALE</ButtonCustom>
+      >
+        VALE
+      </ButtonCustom>
     </Box>
   );
 }
