@@ -7,7 +7,7 @@ import ButtonCustom from "@/app/componets/buttons/ButtonCustom";
 
 import { useAuth } from "@/app/libs/AuthProvider";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 export default function FichadaPage() {
   const { directus } = useAuth();
@@ -34,6 +34,10 @@ export default function FichadaPage() {
       }
     }
   };
+
+  useEffect(() => {
+    inputRefEmpleado.current.focus();
+  }, []);
 
   return (
     <Box>

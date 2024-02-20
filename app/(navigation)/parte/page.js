@@ -7,7 +7,7 @@ import ButtonCustom from "@/app/componets/buttons/ButtonCustom";
 
 import { useAuth } from "@/app/libs/AuthProvider";
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 
 export default function PartePage() {
   const { directus } = useAuth();
@@ -25,6 +25,10 @@ export default function PartePage() {
     inputRefOrdenProduccion.current.value = "";
     inputRefTarea.current.value = "";
   };
+
+  useEffect(() => {
+    inputRefEmpleado.current.focus();
+  }, []);
 
   const handleEnter = (event) => {
     if (event.key === "Enter") {

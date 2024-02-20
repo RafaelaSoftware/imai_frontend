@@ -7,7 +7,7 @@ import ButtonCustom from "@/app/componets/buttons/ButtonCustom";
 
 import { useAuth } from "@/app/libs/AuthProvider";
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 
 export default function ValePage() {
   const { directus } = useAuth();
@@ -49,6 +49,10 @@ export default function ValePage() {
       }
     }
   };
+
+  useEffect(() => {
+    inputRefEmpleado.current.focus();
+  }, []);
 
   return (
     <Box>
