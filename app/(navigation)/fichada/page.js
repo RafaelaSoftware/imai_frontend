@@ -44,6 +44,7 @@ export default function FichadaPage() {
           inputRefEmpleado.current.value
         );
         if (result.isValid) {
+          
           inputRefEmpleadoDescripcion.current.innerText = result.description;
           handleSubmit({
             empleado: inputRefEmpleado.current.value,
