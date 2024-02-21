@@ -4,8 +4,9 @@ export default function InputCustom({
   id,
   type = "text",
   placeholder,
+  value,
   ref,
-  handleKeyDown 
+  handleKeyDown,
 }) {
   return (
     <Input
@@ -14,6 +15,7 @@ export default function InputCustom({
       name={id}
       type={type}
       placeholder={placeholder}
+      value={value}
       ref={ref}
       variant="filled"
       borderRadius="30"
