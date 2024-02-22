@@ -1,106 +1,93 @@
 // Assuming you have a user object with properties 'name' and 'lastName'
 "use client";
 
-import { Text, Box, Center, Input, FormControl, Flex } from "@chakra-ui/react";
-import InputCustom from "@/app/componets/inputs/InputCustom";
+import { Text, Box, Center, Spacer, Flex } from "@chakra-ui/react";
 import ButtonCustom from "@/app/componets/buttons/ButtonCustom";
 import { useAuth } from "@/app/libs/AuthProvider";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState, use } from "react";
 import useCustomToast from "@/app/hooks/useCustomToast";
 import { isValidData } from "@/app/libs/utils";
+import useCustomInput from "@/app/hooks/useCustomInput";
+import InputField from "@/app/componets/inputs/InputField";
 
 export default function ValePage() {
   const { directus, createItem } = useAuth();
   const { showToast } = useCustomToast();
 
   const inputRefEmpleado = useRef(null);
-  const inputRefEmpleadoDescripcion = useRef(null);
   const inputRefOrdenProduccion = useRef(null);
-  const inputRefOrdenProduccionDescripcion = useRef(null);
   const inputRefProducto = useRef(null);
-  const inputRefProductoDescripcion = useRef(null);
   const inputRefCantidad = useRef(null);
 
+  const [items, setItems] = useState([]);
+
+  const empleado = useCustomInput(
+    "",
+    "empleado",
+    inputRefEmpleado,
+    inputRefOrdenProduccion,
+    true
+  );
+  const ordenproduccion = useCustomInput(
+    "",
+    "ordenproduccion",
+    inputRefOrdenProduccion,
+    inputRefProducto,
+    true
+  );
+  const producto = useCustomInput(
+    "",
+    "producto",
+    inputRefProducto,
+    inputRefCantidad,
+    true
+  );
+  const cantidad = useCustomInput(
+    "",
+    "cantidad",
+    inputRefCantidad,
+    inputRefProducto,
+    false
+  );
+
   const handleSubmit = async (values) => {
-    console.log(values);
-    try {
-      const result = await directus.request(
-        createItem("vale", {
-          empleado: values.empleado,
-          ordenProduccion: values.ordenproduccion,
-          producto: values.producto,
-          cantidad: values.cantidad,
-        })
-      );
-      showToast("Notificación", "Vale creado con éxito", "success");
-    } catch (error) {
-      showToast("Error", "No se pudo crear el vale", "error");
+    if (values.empleado === "" || values.ordenproduccion === "") {
+      showToast("Error", "Todos los campos son obligatorios", "error");
+      return;
+    }
+    if (!empleado.isValid || !ordenproduccion.isValid) {
+      showToast("Error", "Hay campos con errores de validación", "error");
+      return;
+    }
+    if (items.length === 0) {
+      showToast("Error", "Debe agregar al menos un item", "error");
+      return;
     }
 
-    inputRefEmpleado.current.focus();
-    inputRefEmpleado.current.value = "";
-    inputRefOrdenProduccion.current.value = "";
-    inputRefProducto.current.value = "";
-    inputRefCantidad.current.value = "";
-
-    inputRefEmpleadoDescripcion.current.innerText = "";
-    inputRefOrdenProduccionDescripcion.current.innerText = "";
-    inputRefProductoDescripcion.current.innerText = "";
-  };
-
-  const handleEnter = async (event) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      event.stopPropagation();
-
-      if (event.target === inputRefEmpleado.current) {
-        const result = await isValidData(
-          "empleado",
-          inputRefEmpleado.current.value
+    try {
+      const id = crypto.randomUUID();
+      items.forEach(async (item) => {
+        const result = await directus.request(
+          createItem("vale", {
+            transaccion: id,
+            empleado: values.empleado,
+            ordenProduccion: values.ordenproduccion,
+            producto: item.producto,
+            cantidad: item.cantidad,
+          })
         );
-        if (result.isValid) {
-          inputRefEmpleadoDescripcion.current.innerText = result.description;
-          inputRefOrdenProduccion.current.focus();
-        } else {
-          inputRefEmpleado.current.value = "";
-          inputRefEmpleadoDescripcion.current.innerText = "";
-          showToast("Error", result.description, "error");
-        }
-      } else if (event.target === inputRefOrdenProduccion.current) {
-        const result = await isValidData(
-          "ordenproduccion",
-          inputRefOrdenProduccion.current.value
-        );
-        if (result.isValid) {
-          inputRefOrdenProduccionDescripcion.current.innerText = 
-            result.description;
-          inputRefProducto.current.focus();
-        } else {
-          inputRefOrdenProduccion.current.value = "";
-          inputRefOrdenProduccionDescripcion.current.innerText = "";
-          showToast("Error", result.description, "error");
-        }
-      } else if (event.target === inputRefProducto.current) {
-        const result = await isValidData(
-          "producto",
-          inputRefProducto.current.value
-        );
-        if (result.isValid) {
-          inputRefProductoDescripcion.current.innerText = result.description;
-          inputRefCantidad.current.focus();
-        } else {
-          inputRefProducto.current.value = "";
-          inputRefProductoDescripcion.current.innerText = "";
-          showToast("Error", result.description, "error");
-        }
-      } else if (event.target === inputRefCantidad.current) {
-        handleSubmit({
-          empleado: inputRefEmpleado.current.value,
-          ordenproduccion: inputRefOrdenProduccion.current.value,
-          producto: inputRefProducto.current.value,
-          cantidad: inputRefCantidad.current.value,
-        });
-      }
+      });
+      showToast("Notificación", "Vale creado con éxito", "success");
+
+      inputRefEmpleado.current.focus();
+      empleado.resetValues();
+      ordenproduccion.resetValues();
+      producto.resetValues();
+      cantidad.resetValues();
+
+      setItems([]);
+    } catch (error) {
+      showToast("Error", "No se pudo crear el vale", "error");
     }
   };
 
@@ -108,81 +95,72 @@ export default function ValePage() {
     inputRefEmpleado.current.focus();
   }, []);
 
+  useEffect(() => {
+    if (producto.isValid && cantidad.isValid) {
+      const item = {
+        producto: producto.value,
+        cantidad: cantidad.value,
+      };
+
+      setItems([...items, item]);
+      producto.resetValues();
+      cantidad.resetValues();
+    }
+  }, [cantidad.isValid]);
+
   return (
     <Box>
       <Center>
         <Text fontSize="lg" fontWeight="bold">
-          VALE
+          VALE DE CONSUMO
         </Text>
       </Center>
 
-      <Flex gap={4} direction="column" alignItems="center">
-        <Input
-          as={Input}
+      <Flex gap={4} direction="column" alignItems="left">
+        <InputField
           id="empleado"
-          name="empleado"
           type="text"
           placeholder="Empleado"
-          ref={inputRefEmpleado}
-          variant="filled"
-          borderRadius="30"
-          size="lg"
-          bgColor="white"
-          color="#C0C0C0"
-          borderColor="#C0C0C0"
-          onKeyDown={handleEnter}
+          onChange={empleado.handleChange}
+          onKeyDown={empleado.handleKeyDown}
+          message={empleado.message}
+          inputRef={inputRefEmpleado}
         />
-        <Text ref={inputRefEmpleadoDescripcion}></Text>
-
-        <Input
-          as={Input}
+        <InputField
           id="ordenproduccion"
-          name="ordenproduccion"
           type="text"
-          placeholder="Orden de Produccion"
-          ref={inputRefOrdenProduccion}
-          variant="filled"
-          borderRadius="30"
-          size="lg"
-          bgColor="white"
-          color="#C0C0C0"
-          borderColor="#C0C0C0"
-          onKeyDown={handleEnter}
+          placeholder="Orden de Producción"
+          onChange={ordenproduccion.handleChange}
+          onKeyDown={ordenproduccion.handleKeyDown}
+          message={ordenproduccion.message}
+          inputRef={inputRefOrdenProduccion}
         />
-        <Text ref={inputRefOrdenProduccionDescripcion}></Text>
 
-        <Input
-          as={Input}
-          id="producto"
-          name="producto"
-          type="text"
-          placeholder="Producto"
-          ref={inputRefProducto}
-          variant="filled"
-          borderRadius="30"
-          size="lg"
-          bgColor="white"
-          color="#C0C0C0"
-          borderColor="#C0C0C0"
-          onKeyDown={handleEnter}
-        />
-        <Text ref={inputRefProductoDescripcion}></Text>
+        <Flex gap={4} direction="row" alignItems={"top"}>
+          <Box flex={2}>
+            <InputField
+              id="producto"
+              type="text"
+              placeholder="Producto"
+              onChange={producto.handleChange}
+              onKeyDown={producto.handleKeyDown}
+              message={producto.message}
+              inputRef={inputRefProducto}
+            />
+          </Box>
 
-        <Input
-          as={Input}
-          id="cantidad"
-          name="cantidad"
-          type="text"
-          placeholder="Cantidad"
-          ref={inputRefCantidad}
-          variant="filled"
-          borderRadius="30"
-          size="lg"
-          bgColor="white"
-          color="#C0C0C0"
-          borderColor="#C0C0C0"
-          onKeyDown={handleEnter}
-        />
+          <Box flex={1}>
+            <InputField
+              id="cantidad"
+              type="number"
+              placeholder="Cantidad"
+              onChange={cantidad.handleChange}
+              onKeyDown={cantidad.handleKeyDown}
+              message={cantidad.message}
+              inputRef={inputRefCantidad}
+            />
+          </Box>
+        </Flex>
 
         <ButtonCustom
           onClick={() => {
