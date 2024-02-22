@@ -2,10 +2,9 @@
 "use client";
 
 import { Text, Box, Center, Input, FormControl, Flex } from "@chakra-ui/react";
-import InputCustom from "@/app/componets/inputs/InputCustom";
 import ButtonCustom from "@/app/componets/buttons/ButtonCustom";
 import { useAuth } from "@/app/libs/AuthProvider";
-import { useEffect, useRef } from "react";
+import { use, useEffect, useRef } from "react";
 import useCustomToast from "@/app/hooks/useCustomToast";
 import { isValidData } from "@/app/libs/utils";
 import useCustomInput from "@/app/hooks/useCustomInput";
@@ -35,17 +34,25 @@ export default function FichadaPage() {
         })
       );
       showToast("Notificación", "Fichada creada con éxito", "success");
+
+      inputRefEmpleado.current.focus();
+      empleado.resetValues();
     } catch (error) {
       showToast("Error", "No se pudo crear la fichada", "error");
     }
-
-    inputRefEmpleado.current.focus();
-    empleado.resetValues();
   };
 
   useEffect(() => {
     inputRefEmpleado.current.focus();
   }, []);
+
+  useEffect(() => {
+    if (empleado.isValid) {
+      handleSubmit({
+        empleado: empleado.value,
+      });
+    }
+  }, [empleado.isValid, empleado.value]);
 
   return (
     <Box>
@@ -55,7 +62,7 @@ export default function FichadaPage() {
         </Text>
       </Center>
 
-      <Flex gap={4} direction="column" alignItems="center">
+      <Flex gap={4} direction="column" alignItems="left">
         <InputField
           id="empleado"
           name="empleado"

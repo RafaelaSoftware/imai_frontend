@@ -1,6 +1,6 @@
 import { Input, Text } from "@chakra-ui/react";
 
-export default function InputCustom({
+export default function InputField({
   id,
   type,
   placeholder,
@@ -25,6 +25,9 @@ export default function InputCustom({
         bgColor="white"
         color="#C0C0C0"
         borderColor="#C0C0C0"
+        _focus={{
+          borderColor: "own",
+        }}
       />
       <Text>{message}</Text>
     </>

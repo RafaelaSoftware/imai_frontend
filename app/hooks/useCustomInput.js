@@ -30,6 +30,7 @@ const useCustomInput = (
   const resetValues = () => {
     setValue("");
     setMessage("");
+    setValid(false);
     inputRef.current.value = "";
   };
 
@@ -37,6 +38,15 @@ const useCustomInput = (
     if (e.key === "Enter") {
       e.preventDefault();
       e.stopPropagation();
+
+      if (type === "cantidad") {
+        if (value === "") {
+          showToast("Error", "El campo cantidad es obligatorio", "error");
+          setValid(false);
+          return;
+        }
+        setValid(true);
+      }
 
       if (value !== "") {
         const result = await isValidData(type, value);

@@ -1,11 +1,10 @@
 // Assuming you have a user object with properties 'name' and 'lastName'
 "use client";
 
-import { Text, Box, Center, Input, FormControl, Flex } from "@chakra-ui/react";
-import InputCustom from "@/app/componets/inputs/InputCustom";
+import { Text, Box, Center, Spacer, Flex } from "@chakra-ui/react";
 import ButtonCustom from "@/app/componets/buttons/ButtonCustom";
 import { useAuth } from "@/app/libs/AuthProvider";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState, use } from "react";
 import useCustomToast from "@/app/hooks/useCustomToast";
 import { isValidData } from "@/app/libs/utils";
 import useCustomInput from "@/app/hooks/useCustomInput";
@@ -19,6 +18,8 @@ export default function ValePage() {
   const inputRefOrdenProduccion = useRef(null);
   const inputRefProducto = useRef(null);
   const inputRefCantidad = useRef(null);
+
+  const [items, setItems] = useState([]);
 
   const empleado = useCustomInput(
     "",
@@ -50,55 +51,72 @@ export default function ValePage() {
   );
 
   const handleSubmit = async (values) => {
-    if (
-      values.empleado === "" ||
-      values.ordenproduccion === "" ||
-      values.producto === "" ||
-      values.cantidad === ""
-    ) {
+    if (values.empleado === "" || values.ordenproduccion === "") {
       showToast("Error", "Todos los campos son obligatorios", "error");
       return;
     }
-
-    if (!empleado.isValid || !ordenproduccion.isValid || !producto.isValid) {
+    if (!empleado.isValid || !ordenproduccion.isValid) {
       showToast("Error", "Hay campos con errores de validación", "error");
+      return;
+    }
+    if (items.length === 0) {
+      showToast("Error", "Debe agregar al menos un item", "error");
       return;
     }
 
     try {
-      const result = await directus.request(
-        createItem("vale", {
-          empleado: values.empleado,
-          ordenProduccion: values.ordenproduccion,
-          producto: values.producto,
-          cantidad: values.cantidad,
-        })
-      );
+      const id = crypto.randomUUID();
+      items.forEach(async (item) => {
+        const result = await directus.request(
+          createItem("vale", {
+            transaccion: id,
+            empleado: values.empleado,
+            ordenProduccion: values.ordenproduccion,
+            producto: item.producto,
+            cantidad: item.cantidad,
+          })
+        );
+      });
       showToast("Notificación", "Vale creado con éxito", "success");
+
+      inputRefEmpleado.current.focus();
+      empleado.resetValues();
+      ordenproduccion.resetValues();
+      producto.resetValues();
+      cantidad.resetValues();
+
+      setItems([]);
     } catch (error) {
       showToast("Error", "No se pudo crear el vale", "error");
     }
-
-    inputRefEmpleado.current.focus();
-    empleado.resetValues();
-    ordenproduccion.resetValues();
-    producto.resetValues();
-    cantidad.resetValues();
   };
 
   useEffect(() => {
     inputRefEmpleado.current.focus();
   }, []);
 
+  useEffect(() => {
+    if (producto.isValid && cantidad.isValid) {
+      const item = {
+        producto: producto.value,
+        cantidad: cantidad.value,
+      };
+
+      setItems([...items, item]);
+      producto.resetValues();
+      cantidad.resetValues();
+    }
+  }, [cantidad.isValid]);
+
   return (
     <Box>
       <Center>
         <Text fontSize="lg" fontWeight="bold">
-          VALE
+          VALE DE CONSUMO
         </Text>
       </Center>
 
-      <Flex gap={4} direction="column" alignItems="center">
+      <Flex gap={4} direction="column" alignItems="left">
         <InputField
           id="empleado"
           type="text"
@@ -117,24 +135,32 @@ export default function ValePage() {
           message={ordenproduccion.message}
           inputRef={inputRefOrdenProduccion}
         />
-        <InputField
-          id="producto"
-          type="text"
-          placeholder="Producto"
-          onChange={producto.handleChange}
-          onKeyDown={producto.handleKeyDown}
-          message={producto.message}
-          inputRef={inputRefProducto}
-        />
-        <InputField
-          id="cantidad"
-          type="number"
-          placeholder="Cantidad"
-          onChange={cantidad.handleChange}
-          onKeyDown={cantidad.handleKeyDown}
-          message={cantidad.message}
-          inputRef={inputRefCantidad}
-        />
+
+        <Flex gap={4} direction="row" alignItems={"top"}>
+          <Box flex={2}>
+            <InputField
+              id="producto"
+              type="text"
+              placeholder="Producto"
+              onChange={producto.handleChange}
+              onKeyDown={producto.handleKeyDown}
+              message={producto.message}
+              inputRef={inputRefProducto}
+            />
+          </Box>
+
+          <Box flex={1}>
+            <InputField
+              id="cantidad"
+              type="number"
+              placeholder="Cantidad"
+              onChange={cantidad.handleChange}
+              onKeyDown={cantidad.handleKeyDown}
+              message={cantidad.message}
+              inputRef={inputRefCantidad}
+            />
+          </Box>
+        </Flex>
 
         <ButtonCustom
           onClick={() => {

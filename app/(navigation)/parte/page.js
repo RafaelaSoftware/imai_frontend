@@ -34,8 +34,6 @@ export default function PartePage() {
   );
   const tarea = useCustomInput("", "tarea", inputRefTarea, null, true);
 
-  console.log(empleado, ordenproduccion, tarea);
-
   const handleSubmit = async (values) => {
     if (
       values.empleado === "" ||
@@ -60,14 +58,14 @@ export default function PartePage() {
         })
       );
       showToast("Notificación", "Parte creado con éxito", "success");
+
+      inputRefEmpleado.current.focus();
+      empleado.resetValues();
+      ordenproduccion.resetValues();
+      tarea.resetValues();
     } catch (error) {
       showToast("Error", "No se pudo crear el parte", "error");
     }
-
-    inputRefEmpleado.current.focus();
-    empleado.resetValues();
-    ordenproduccion.resetValues();
-    tarea.resetValues();
   };
 
   useEffect(() => {
@@ -78,11 +76,11 @@ export default function PartePage() {
     <Box>
       <Center>
         <Text fontSize="lg" fontWeight="bold">
-          PARTE
+          PARTE DE PRODUCCION
         </Text>
       </Center>
 
-      <Flex gap={4} direction="column" alignItems="center">
+      <Flex gap={4} direction="column" alignItems="left">
         <InputField
           id="empleado"
           name="empleado"
