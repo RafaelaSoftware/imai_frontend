@@ -10,6 +10,8 @@ export default function Home() {
   const { loading, user } = useAuth();
   const router = useRouter();
 
+  console.log("user", user);
+
   const handleOption = (option) => {
     router.push(`/${option}`);
   };
@@ -54,27 +56,33 @@ export default function Home() {
       flexDirection="column"
       gap={8}
     >
-      <ButtonCustom
-        onClick={() => {
-          handleOption("fichada");
-        }}
-      >
-        FICHADA
-      </ButtonCustom>
-      <ButtonCustom
-        onClick={() => {
-          handleOption("parte");
-        }}
-      >
-        PARTE
-      </ButtonCustom>
-      <ButtonCustom
-        onClick={() => {
-          handleOption("vale");
-        }}
-      >
-        VALE
-      </ButtonCustom>
+      {user.role.permite_crear_fichada && (
+        <ButtonCustom
+          onClick={() => {
+            handleOption("fichada");
+          }}
+        >
+          FICHADA
+        </ButtonCustom>
+      )}
+      {user.role.permite_crear_parte && (
+        <ButtonCustom
+          onClick={() => {
+            handleOption("parte");
+          }}
+        >
+          PARTE
+        </ButtonCustom>
+      )}
+      {user.role.permite_crear_vale && (
+        <ButtonCustom
+          onClick={() => {
+            handleOption("vale");
+          }}
+        >
+          VALE
+        </ButtonCustom>
+      )}
     </Box>
   );
 }
