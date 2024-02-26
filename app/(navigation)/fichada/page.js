@@ -60,7 +60,6 @@ export default function FichadaPage() {
             limit: 1,
           })
         );
-        console.log(partesAbiertos);
 
         if (partesAbiertos.length > 0 && partesAbiertos[0].fin === null) {
           const parte = partesAbiertos[0];
