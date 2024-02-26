@@ -8,10 +8,13 @@ import { useRef, useEffect, useState, use } from "react";
 import useCustomToast from "@/app/hooks/useCustomToast";
 import useCustomInput from "@/app/hooks/useCustomInput";
 import InputField from "@/app/componets/inputs/InputField";
+import { useRouter } from "next/navigation";
 
 export default function ValePage() {
   const { directus, createItem, user, readItems } = useAuth();
   const { showToast } = useCustomToast();
+  const router = useRouter();
+
   const inputRefEmpleado = useRef(null);
   const inputRefOrdenProduccion = useRef(null);
   const inputRefProducto = useRef(null);
@@ -112,6 +115,10 @@ export default function ValePage() {
   };
 
   useEffect(() => {
+    if (!user) {
+      router.push("/");
+    }
+
     inputRefEmpleado.current.focus();
   }, []);
 

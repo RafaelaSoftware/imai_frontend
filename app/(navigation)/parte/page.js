@@ -8,10 +8,12 @@ import { useRef, useEffect } from "react";
 import useCustomToast from "@/app/hooks/useCustomToast";
 import useCustomInput from "@/app/hooks/useCustomInput";
 import InputField from "@/app/componets/inputs/InputField";
+import { useRouter } from "next/navigation";
 
 export default function PartePage() {
   const { directus, createItem, readItems, user, updateItem } = useAuth();
   const { showToast } = useCustomToast();
+  const router = useRouter();
 
   const inputRefEmpleado = useRef(null);
   const inputRefOrdenProduccion = useRef(null);
@@ -131,6 +133,10 @@ export default function PartePage() {
   };
 
   useEffect(() => {
+    if (!user) {
+      router.push("/");
+    }
+
     inputRefEmpleado.current.focus();
   }, []);
 

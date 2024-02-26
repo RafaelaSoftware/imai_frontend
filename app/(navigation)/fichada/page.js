@@ -8,10 +8,12 @@ import { useEffect, useRef } from "react";
 import useCustomToast from "@/app/hooks/useCustomToast";
 import useCustomInput from "@/app/hooks/useCustomInput";
 import InputField from "@/app/componets/inputs/InputField";
+import { useRouter } from "next/navigation";
 
 export default function FichadaPage() {
-  const { directus, createItem, readItems, updateItem } = useAuth();
+  const { directus, createItem, readItems, updateItem, user } = useAuth();
   const { showToast } = useCustomToast();
+  const router = useRouter();
 
   const inputRefEmpleado = useRef(null);
   const empleado = useCustomInput("", "empleado", inputRefEmpleado, null, true);
@@ -91,6 +93,10 @@ export default function FichadaPage() {
   };
 
   useEffect(() => {
+    if (!user) {
+      router.push("/");
+    }
+
     inputRefEmpleado.current.focus();
   }, []);
 
