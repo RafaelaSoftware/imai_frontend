@@ -48,6 +48,32 @@ export default function FichadaPage() {
         );
         showToast("Notificación", "Fichada creada con éxito", "success");
       } else {
+        // si hay un parte abierto, se cierra antes
+        const partesAbiertos = await directus.request(
+          readItems("parte", {
+            filter: {
+              empleado: { _eq: values.empleado },
+            },
+            sort: ["-inicio"],
+            limit: 1,
+          })
+        );
+        console.log(partesAbiertos);
+
+        if (partesAbiertos.length > 0 && partesAbiertos[0].fin === null) {
+          const parte = partesAbiertos[0];
+          await directus.request(
+            updateItem("parte", parte.id, {
+              fin: new Date().toISOString(),
+            })
+          );
+          showToast(
+            "Notificación",
+            "Parte abierto actualizado con éxito",
+            "success"
+          );
+        }
+
         const fichada = result[0];
         result = await directus.request(
           updateItem("fichada", fichada.id, {

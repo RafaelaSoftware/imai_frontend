@@ -10,7 +10,7 @@ import useCustomInput from "@/app/hooks/useCustomInput";
 import InputField from "@/app/componets/inputs/InputField";
 
 export default function PartePage() {
-  const { directus, createItem, readItems, user } = useAuth();
+  const { directus, createItem, readItems, user, updateItem } = useAuth();
   const { showToast } = useCustomToast();
 
   const inputRefEmpleado = useRef(null);
@@ -58,7 +58,6 @@ export default function PartePage() {
       return;
     }
 
-    // check if empleado has fichada iniciada
     const result = await directus.request(
       readItems("fichada", {
         filter: {
@@ -93,7 +92,23 @@ export default function PartePage() {
       return;
     }
 
-    //hora in empleado.inicio
+    const partesAbiertos = await directus.request(
+      readItems("parte", {
+        filter: {
+          empleado: { _eq: values.empleado },
+        },
+        limit: 1,
+      })
+    );
+
+    if (partesAbiertos.length > 0 && partesAbiertos[0].fin === null) {
+      const parte = partesAbiertos[0];
+      await directus.request(
+        updateItem("parte", parte.id, {
+          fin: ahora.toISOString(),
+        })
+      );
+    }
 
     try {
       const result = await directus.request(
@@ -101,6 +116,7 @@ export default function PartePage() {
           empleado: values.empleado,
           ordenProduccion: values.ordenproduccion,
           tarea: values.tarea,
+          inicio: ahora.toISOString(),
         })
       );
       showToast("Notificación", "Parte creado con éxito", "success");
