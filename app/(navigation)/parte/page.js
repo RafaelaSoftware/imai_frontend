@@ -10,7 +10,7 @@ import useCustomInput from "@/app/hooks/useCustomInput";
 import InputField from "@/app/componets/inputs/InputField";
 
 export default function PartePage() {
-  const { directus, createItem } = useAuth();
+  const { directus, createItem, readItems, user } = useAuth();
   const { showToast } = useCustomToast();
 
   const inputRefEmpleado = useRef(null);
@@ -47,6 +47,53 @@ export default function PartePage() {
       showToast("Error", "Hay campos con errores de validación", "error");
       return;
     }
+
+    const esTareaPermitida = empleado.tareas.includes(tarea.value);
+    if (!esTareaPermitida) {
+      showToast(
+        "Error",
+        "Permiso denegado. Tarea no permitida para el empleado",
+        "error"
+      );
+      return;
+    }
+
+    // check if empleado has fichada iniciada
+    const result = await directus.request(
+      readItems("fichada", {
+        filter: {
+          empleado: { _eq: values.empleado },
+        },
+        limit: 1,
+        sort: ["-ingreso"],
+      })
+    );
+
+    const puedeCrearParte = result.length > 0 && result[0].egreso === null;
+    if (!puedeCrearParte) {
+      showToast(
+        "Error",
+        "Permiso denegado. NO puede crear parte sin fichada regitrada.",
+        "error"
+      );
+      return;
+    }
+
+    const ahora = new Date();
+    const tieneTurnoVigente =
+      ahora.getHours() >= empleado.inicioTurno.split(":")[0] ||
+      user?.role?.permite_crear_parte_sin_turno;
+
+    if (!tieneTurnoVigente) {
+      showToast(
+        "Error",
+        "Permiso denegado. NO puede crear parte sin turno vigente.",
+        "error"
+      );
+      return;
+    }
+
+    //hora in empleado.inicio
 
     try {
       const result = await directus.request(

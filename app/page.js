@@ -10,8 +10,6 @@ export default function Home() {
   const { loading, user } = useAuth();
   const router = useRouter();
 
-  console.log("user", user);
-
   const handleOption = (option) => {
     router.push(`/${option}`);
   };

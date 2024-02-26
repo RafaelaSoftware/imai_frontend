@@ -16,7 +16,7 @@ const isValidData = async (table, data) => {
       description: `Descripcion de ${table} ${data}`,
 
       //only for empleado
-      inicio: "08:00",
+      inicioTurno: "12:00",
       tareas: ["1111", "2222", "3333"],
     };
   }

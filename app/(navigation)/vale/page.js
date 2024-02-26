@@ -62,7 +62,6 @@ export default function ValePage() {
       return;
     }
 
-    // check if empleado has fichada iniciada
     const result = await directus.request(
       readItems("fichada", {
         filter: {
@@ -73,15 +72,9 @@ export default function ValePage() {
       })
     );
 
-    console.log("result", result);
-
     const puedeCrearVale =
       (result.length > 0 && result[0].egreso === null) ||
       user?.role?.permite_crear_vale_sin_fichada;
-
-    console.log("puedeCrearVale", puedeCrearVale);
-    console.log("user", user);
-
     if (!puedeCrearVale) {
       showToast(
         "Error",
