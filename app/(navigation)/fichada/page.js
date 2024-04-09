@@ -4,15 +4,16 @@
 import { Text, Box, Center, Input, FormControl, Flex } from "@chakra-ui/react";
 import ButtonCustom from "@/app/componets/buttons/ButtonCustom";
 import { useAuth } from "@/app/libs/AuthProvider";
-import { use, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import useCustomToast from "@/app/hooks/useCustomToast";
-import { isValidData } from "@/app/libs/utils";
 import useCustomInput from "@/app/hooks/useCustomInput";
 import InputField from "@/app/componets/inputs/InputField";
+import { useRouter } from "next/navigation";
 
 export default function FichadaPage() {
-  const { directus, createItem } = useAuth();
+  const { directus, createItem, readItems, updateItem, user } = useAuth();
   const { showToast } = useCustomToast();
+  const router = useRouter();
 
   const inputRefEmpleado = useRef(null);
   const empleado = useCustomInput("", "empleado", inputRefEmpleado, null, true);
@@ -28,12 +29,60 @@ export default function FichadaPage() {
     }
 
     try {
-      const result = await directus.request(
-        createItem("fichada", {
-          empleado: values.empleado,
+      let result;
+      result = await directus.request(
+        readItems("fichada", {
+          filter: {
+            empleado: { _eq: values.empleado },
+          },
+          limit: 1,
+          sort: ["-ingreso"],
         })
       );
-      showToast("Notificación", "Fichada creada con éxito", "success");
+
+      const esIngreso = result.length === 0 || result[0].egreso !== null;
+      if (esIngreso) {
+        result = await directus.request(
+          createItem("fichada", {
+            empleado: values.empleado,
+            ingreso: new Date().toISOString(),
+          })
+        );
+        showToast("Notificación", "Fichada creada con éxito", "success");
+      } else {
+        // si hay un parte abierto, se cierra antes
+        const partesAbiertos = await directus.request(
+          readItems("parte", {
+            filter: {
+              empleado: { _eq: values.empleado },
+            },
+            sort: ["-inicio"],
+            limit: 1,
+          })
+        );
+
+        if (partesAbiertos.length > 0 && partesAbiertos[0].fin === null) {
+          const parte = partesAbiertos[0];
+          await directus.request(
+            updateItem("parte", parte.id, {
+              fin: new Date().toISOString(),
+            })
+          );
+          showToast(
+            "Notificación",
+            "Parte abierto actualizado con éxito",
+            "success"
+          );
+        }
+
+        const fichada = result[0];
+        result = await directus.request(
+          updateItem("fichada", fichada.id, {
+            egreso: new Date().toISOString(),
+          })
+        );
+        showToast("Notificación", "Fichada actualizada con éxito", "success");
+      }
 
       inputRefEmpleado.current.focus();
       empleado.resetValues();
@@ -43,6 +92,10 @@ export default function FichadaPage() {
   };
 
   useEffect(() => {
+    if (!user) {
+      router.push("/");
+    }
+
     inputRefEmpleado.current.focus();
   }, []);
 

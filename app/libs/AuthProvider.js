@@ -1,6 +1,14 @@
 "use client";
 import { createContext, useContext, useEffect, useState } from "react";
-import { createDirectus, rest, authentication, readMe, createItem } from "@directus/sdk";
+import {
+  createDirectus,
+  rest,
+  authentication,
+  readMe,
+  createItem,
+  readItems,
+  updateItem,
+} from "@directus/sdk";
 import { useRouter } from "next/navigation";
 
 export const AuthContext = createContext();
@@ -51,6 +59,8 @@ export const AuthProvider = ({ children }) => {
     user,
     loading,
     createItem,
+    readItems,
+    updateItem,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

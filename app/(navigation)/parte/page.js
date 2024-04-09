@@ -6,13 +6,14 @@ import ButtonCustom from "@/app/componets/buttons/ButtonCustom";
 import { useAuth } from "@/app/libs/AuthProvider";
 import { useRef, useEffect } from "react";
 import useCustomToast from "@/app/hooks/useCustomToast";
-import { isValidData } from "@/app/libs/utils";
 import useCustomInput from "@/app/hooks/useCustomInput";
 import InputField from "@/app/componets/inputs/InputField";
+import { useRouter } from "next/navigation";
 
 export default function PartePage() {
-  const { directus, createItem } = useAuth();
+  const { directus, createItem, readItems, user, updateItem } = useAuth();
   const { showToast } = useCustomToast();
+  const router = useRouter();
 
   const inputRefEmpleado = useRef(null);
   const inputRefOrdenProduccion = useRef(null);
@@ -49,12 +50,75 @@ export default function PartePage() {
       return;
     }
 
+    const esTareaPermitida = empleado.tareas.includes(tarea.value);
+    if (!esTareaPermitida) {
+      showToast(
+        "Error",
+        "Permiso denegado. Tarea no permitida para el empleado",
+        "error"
+      );
+      return;
+    }
+
+    const result = await directus.request(
+      readItems("fichada", {
+        filter: {
+          empleado: { _eq: values.empleado },
+        },
+        limit: 1,
+        sort: ["-ingreso"],
+      })
+    );
+
+    const puedeCrearParte = result.length > 0 && result[0].egreso === null;
+    if (!puedeCrearParte) {
+      showToast(
+        "Error",
+        "Permiso denegado. NO puede crear parte sin fichada regitrada.",
+        "error"
+      );
+      return;
+    }
+
+    const ahora = new Date();
+    const tieneTurnoVigente =
+      ahora.getHours() >= empleado.inicioTurno.split(":")[0] ||
+      user?.role?.permite_crear_parte_sin_turno;
+
+    if (!tieneTurnoVigente) {
+      showToast(
+        "Error",
+        "Permiso denegado. NO puede crear parte sin turno vigente.",
+        "error"
+      );
+      return;
+    }
+
+    const partesAbiertos = await directus.request(
+      readItems("parte", {
+        filter: {
+          empleado: { _eq: values.empleado },
+        },
+        limit: 1,
+      })
+    );
+
+    if (partesAbiertos.length > 0 && partesAbiertos[0].fin === null) {
+      const parte = partesAbiertos[0];
+      await directus.request(
+        updateItem("parte", parte.id, {
+          fin: ahora.toISOString(),
+        })
+      );
+    }
+
     try {
       const result = await directus.request(
         createItem("parte", {
           empleado: values.empleado,
           ordenProduccion: values.ordenproduccion,
           tarea: values.tarea,
+          inicio: ahora.toISOString(),
         })
       );
       showToast("Notificación", "Parte creado con éxito", "success");
@@ -69,6 +133,10 @@ export default function PartePage() {
   };
 
   useEffect(() => {
+    if (!user) {
+      router.push("/");
+    }
+
     inputRefEmpleado.current.focus();
   }, []);
 

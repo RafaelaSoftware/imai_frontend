@@ -12,6 +12,8 @@ const useCustomInput = (
   const [value, setValue] = useState(initialValue);
   const [message, setMessage] = useState("");
   const [isValid, setValid] = useState(false);
+  const [inicioTurno, setInicioTurno] = useState("");
+  const [tareas, setTareas] = useState([]);
   const { showToast } = useCustomToast();
 
   useEffect(() => {
@@ -50,7 +52,6 @@ const useCustomInput = (
 
       if (value !== "") {
         const result = await isValidData(type, value);
-
         setValid(result.isValid);
 
         if (result.isValid) {
@@ -59,6 +60,14 @@ const useCustomInput = (
           }
           if (targetRef) {
             targetRef.current.focus();
+          }
+
+          if (type === "empleado") {
+            setInicioTurno(result.inicioTurno);
+            setTareas(result.tareas);
+          } else {
+            setInicioTurno("");
+            setTareas([]);
           }
         } else {
           resetValues();
@@ -78,6 +87,8 @@ const useCustomInput = (
     handleKeyDown,
     resetValues,
     isValid,
+    inicioTurno,
+    tareas,
   };
 };
 

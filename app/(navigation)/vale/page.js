@@ -6,13 +6,14 @@ import ButtonCustom from "@/app/componets/buttons/ButtonCustom";
 import { useAuth } from "@/app/libs/AuthProvider";
 import { useRef, useEffect, useState, use } from "react";
 import useCustomToast from "@/app/hooks/useCustomToast";
-import { isValidData } from "@/app/libs/utils";
 import useCustomInput from "@/app/hooks/useCustomInput";
 import InputField from "@/app/componets/inputs/InputField";
+import { useRouter } from "next/navigation";
 
 export default function ValePage() {
-  const { directus, createItem } = useAuth();
+  const { directus, createItem, user, readItems } = useAuth();
   const { showToast } = useCustomToast();
+  const router = useRouter();
 
   const inputRefEmpleado = useRef(null);
   const inputRefOrdenProduccion = useRef(null);
@@ -64,6 +65,28 @@ export default function ValePage() {
       return;
     }
 
+    const result = await directus.request(
+      readItems("fichada", {
+        filter: {
+          empleado: { _eq: values.empleado },
+        },
+        limit: 1,
+        sort: ["-ingreso"],
+      })
+    );
+
+    const puedeCrearVale =
+      (result.length > 0 && result[0].egreso === null) ||
+      user?.role?.permite_crear_vale_sin_fichada;
+    if (!puedeCrearVale) {
+      showToast(
+        "Error",
+        "Permiso denegado. NO puede crear vale sin fichada regitrada.",
+        "error"
+      );
+      return;
+    }
+
     try {
       const id = crypto.randomUUID();
       items.forEach(async (item) => {
@@ -92,6 +115,10 @@ export default function ValePage() {
   };
 
   useEffect(() => {
+    if (!user) {
+      router.push("/");
+    }
+
     inputRefEmpleado.current.focus();
   }, []);
 
