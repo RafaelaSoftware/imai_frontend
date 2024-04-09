@@ -2,65 +2,110 @@
 "use client";
 
 import { Text, Box, Center, Input, FormControl, Flex } from "@chakra-ui/react";
-import InputCustom from "@/app/componets/inputs/InputCustom";
 import ButtonCustom from "@/app/componets/buttons/ButtonCustom";
 import { useAuth } from "@/app/libs/AuthProvider";
 import { useEffect, useRef } from "react";
 import useCustomToast from "@/app/hooks/useCustomToast";
-import { isValidData } from "@/app/libs/utils";
+import useCustomInput from "@/app/hooks/useCustomInput";
+import InputField from "@/app/componets/inputs/InputField";
+import { useRouter } from "next/navigation";
 
 export default function FichadaPage() {
-  const { directus, createItem } = useAuth();
+  const { directus, createItem, readItems, updateItem, user } = useAuth();
   const { showToast } = useCustomToast();
+  const router = useRouter();
 
   const inputRefEmpleado = useRef(null);
-  const inputRefEmpleadoDescripcion = useRef(null);
+  const empleado = useCustomInput("", "empleado", inputRefEmpleado, null, true);
 
   const handleSubmit = async (values) => {
-    console.log(values);
-    try {
-      const result = await directus.request(
-        createItem("fichada", {
-          empleado: values.empleado,
-        })
-      );
-      showToast("Notificación", "Fichada creada con éxito", "success");
-    } catch (error) {
-      showToast("Error", "No se pudo crear la fichada", "error");
+    if (values.empleado === "") {
+      showToast("Error", "Todos los campos son obligatorios", "error");
+      return;
+    }
+    if (!empleado.isValid) {
+      showToast("Error", "Hay campos con errores de validación", "error");
+      return;
     }
 
-    inputRefEmpleado.current.focus();
-    inputRefEmpleado.current.value = "";
-  };
+    try {
+      let result;
+      result = await directus.request(
+        readItems("fichada", {
+          filter: {
+            empleado: { _eq: values.empleado },
+          },
+          limit: 1,
+          sort: ["-ingreso"],
+        })
+      );
 
-  const handleEnter = async (event) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      event.stopPropagation();
-
-      if (event.target === inputRefEmpleado.current) {
-        const result = await isValidData(
-          "empleado",
-          inputRefEmpleado.current.value
+      const esIngreso = result.length === 0 || result[0].egreso !== null;
+      if (esIngreso) {
+        result = await directus.request(
+          createItem("fichada", {
+            empleado: values.empleado,
+            ingreso: new Date().toISOString(),
+          })
         );
-        if (result.isValid) {
-          
-          inputRefEmpleadoDescripcion.current.innerText = result.description;
-          handleSubmit({
-            empleado: inputRefEmpleado.current.value,
-          });
-        } else {
-          inputRefEmpleado.current.value = "";
-          inputRefEmpleadoDescripcion.current.innerText = "";
-          showToast("Error", result.description, "error");
+        showToast("Notificación", "Fichada creada con éxito", "success");
+      } else {
+        // si hay un parte abierto, se cierra antes
+        const partesAbiertos = await directus.request(
+          readItems("parte", {
+            filter: {
+              empleado: { _eq: values.empleado },
+            },
+            sort: ["-inicio"],
+            limit: 1,
+          })
+        );
+
+        if (partesAbiertos.length > 0 && partesAbiertos[0].fin === null) {
+          const parte = partesAbiertos[0];
+          await directus.request(
+            updateItem("parte", parte.id, {
+              fin: new Date().toISOString(),
+            })
+          );
+          showToast(
+            "Notificación",
+            "Parte abierto actualizado con éxito",
+            "success"
+          );
         }
+
+        const fichada = result[0];
+        result = await directus.request(
+          updateItem("fichada", fichada.id, {
+            egreso: new Date().toISOString(),
+          })
+        );
+        showToast("Notificación", "Fichada actualizada con éxito", "success");
       }
+
+      inputRefEmpleado.current.focus();
+      empleado.resetValues();
+    } catch (error) {
+      showToast("Error", "No se pudo crear la fichada", "error");
     }
   };
 
   useEffect(() => {
+    if (!user) {
+      router.push("/");
+    }
+
     inputRefEmpleado.current.focus();
   }, []);
+
+  useEffect(() => {
+    if (empleado.isValid) {
+      handleSubmit({
+        empleado: empleado.value,
+      });
+    }
+  }, [empleado.isValid, empleado.value]);
 
   return (
     <Box>
@@ -70,28 +115,22 @@ export default function FichadaPage() {
         </Text>
       </Center>
 
-      <Flex gap={4} direction="column" alignItems="center">
-        <Input
-          as={Input}
+      <Flex gap={4} direction="column" alignItems="left">
+        <InputField
           id="empleado"
           name="empleado"
           type="text"
           placeholder="Empleado"
-          ref={inputRefEmpleado}
-          variant="filled"
-          borderRadius="30"
-          size="lg"
-          bgColor="white"
-          color="#C0C0C0"
-          borderColor="#C0C0C0"
-          onKeyDown={handleEnter}
+          onChange={empleado.handleChange}
+          onKeyDown={empleado.handleKeyDown}
+          message={empleado.message}
+          inputRef={inputRefEmpleado}
         />
-        <Text ref={inputRefEmpleadoDescripcion}></Text>
 
         <ButtonCustom
           onClick={() => {
             handleSubmit({
-              empleado: inputRefEmpleado.current.value,
+              empleado: empleado.value,
             });
           }}
         >

@@ -5,15 +5,21 @@ const isLoginModalType = (type) => {
 };
 
 const isValidData = async (table, data) => {
-  // fetch endpoint /table with parametres data
-  // if result is empty, return false
-  // else return true
-  console.log(`isValidaData: ${table} ${data}`);
+  if (data === "999") {
+    return {
+      isValid: false,
+      description: `Resultado no encontrado para ${table} ${data}`,
+    };
+  } else {
+    return {
+      isValid: true,
+      description: `Descripcion de ${table} ${data}`,
 
-  return {
-    isValid: true,
-    description: `Descripcion de ${table} ${data}`,
-  };   
+      //only for empleado
+      inicioTurno: "12:00",
+      tareas: ["1111", "2222", "3333"],
+    };
+  }
 };
 
 export { isLoginModalType, isValidData };
