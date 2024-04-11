@@ -14,5 +14,5 @@ COPY --from=builder /fe/next.config.js ./
 COPY --from=builder /fe/public ./public
 COPY --from=builder /fe/.next/standalone ./
 COPY --from=builder /fe/.next/static ./.next/static
-EXPOSE 3000
+EXPOSE 8060
 ENTRYPOINT ["npm", "start"]
