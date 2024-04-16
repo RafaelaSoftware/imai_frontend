@@ -111,6 +111,7 @@ export default function ValePage() {
 
       setItems([]);
     } catch (error) {
+      console.log(error);
       showToast("Error", "No se pudo crear el vale", "error");
     }
   };
