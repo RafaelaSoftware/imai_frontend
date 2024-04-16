@@ -48,9 +48,12 @@ const useCustomInput = (
           return;
         }
         setValid(true);
+        if (targetRef) {
+          targetRef.current.focus();
+        }
       }
 
-      if (value !== "") {
+      if (type !== "cantidad" && value !== "") {
         const result = await isValidData(type, value);
         setValid(result.isValid);
 

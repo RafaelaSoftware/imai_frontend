@@ -9,6 +9,7 @@ import useCustomToast from "@/app/hooks/useCustomToast";
 import useCustomInput from "@/app/hooks/useCustomInput";
 import InputField from "@/app/componets/inputs/InputField";
 import { useRouter } from "next/navigation";
+import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
 
 export default function ValePage() {
   const { directus, createItem, user, readItems } = useAuth();
@@ -126,6 +127,7 @@ export default function ValePage() {
     if (producto.isValid && cantidad.isValid) {
       const item = {
         producto: producto.value,
+        descripcion: producto.message,
         cantidad: cantidad.value,
       };
 
@@ -201,6 +203,38 @@ export default function ValePage() {
         >
           Confirmar
         </ButtonCustom>
+
+        {items.length > 0 && (
+          <Box>
+            <Text fontSize="lg" fontWeight="bold">
+              Productos a consumir
+            </Text>
+            <Flex gap={4} direction="column" alignItems="left">
+              {items.length > 0 && (
+                <Box>
+                  <Table variant="simple">
+                    <Thead>
+                      <Tr>
+                        <Th>Cantidad</Th>
+                        <Th>Código</Th>
+                        <Th>Descripción</Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      {items.map((item, index) => (
+                        <Tr key={index}>
+                          <Td>{item.cantidad}</Td>
+                          <Td>{item.producto}</Td>
+                          <Td>{item.descripcion}</Td>
+                        </Tr>
+                      ))}
+                    </Tbody>
+                  </Table>
+                </Box>
+              )}
+            </Flex>
+          </Box>
+        )}
       </Flex>
     </Box>
   );
