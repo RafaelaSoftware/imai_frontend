@@ -41,6 +41,7 @@ export default function FichadaPage() {
       );
 
       const esIngreso = result.length === 0 || result[0].egreso !== null;
+
       if (esIngreso) {
         result = await directus.request(
           createItem("fichada", {
