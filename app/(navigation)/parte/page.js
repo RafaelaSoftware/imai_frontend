@@ -128,6 +128,7 @@ export default function PartePage() {
       ordenproduccion.resetValues();
       tarea.resetValues();
     } catch (error) {
+      console.log(error);
       showToast("Error", "No se pudo crear el parte", "error");
     }
   };

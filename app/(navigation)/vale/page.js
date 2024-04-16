@@ -11,6 +11,8 @@ import InputField from "@/app/componets/inputs/InputField";
 import { useRouter } from "next/navigation";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
 
+import { v4 as uuidv4 } from "uuid";
+
 export default function ValePage() {
   const { directus, createItem, user, readItems } = useAuth();
   const { showToast } = useCustomToast();
@@ -89,7 +91,9 @@ export default function ValePage() {
     }
 
     try {
-      const id = crypto.randomUUID();
+      //const id = crypto.randomUUID();
+      const id = uuidv4();
+
       items.forEach(async (item) => {
         const result = await directus.request(
           createItem("vale", {

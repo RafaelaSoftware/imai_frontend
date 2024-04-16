@@ -88,6 +88,7 @@ export default function FichadaPage() {
       inputRefEmpleado.current.focus();
       empleado.resetValues();
     } catch (error) {
+      console.log(error);
       showToast("Error", "No se pudo crear la fichada", "error");
     }
   };
