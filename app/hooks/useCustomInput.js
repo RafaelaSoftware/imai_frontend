@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { isValidData } from "@/app/libs/utils";
+import { changeBackgroundColor, isValidData } from "@/app/libs/utils";
 import useCustomToast from "@/app/hooks/useCustomToast";
 
 const useCustomInput = (
@@ -75,6 +75,7 @@ const useCustomInput = (
         } else {
           resetValues();
           showToast("Error", result.description, "error");
+          changeBackgroundColor("error");
         }
       }
     }

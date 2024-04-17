@@ -9,6 +9,7 @@ import useCustomToast from "@/app/hooks/useCustomToast";
 import useCustomInput from "@/app/hooks/useCustomInput";
 import InputField from "@/app/componets/inputs/InputField";
 import { useRouter } from "next/navigation";
+import { changeBackgroundColor } from "@/app/libs/utils";
 
 export default function FichadaPage() {
   const { directus, createItem, readItems, updateItem, user } = useAuth();
@@ -21,10 +22,12 @@ export default function FichadaPage() {
   const handleSubmit = async (values) => {
     if (values.empleado === "") {
       showToast("Error", "Todos los campos son obligatorios", "error");
+      changeBackgroundColor("error");
       return;
     }
     if (!empleado.isValid) {
       showToast("Error", "Hay campos con errores de validación", "error");
+      changeBackgroundColor("error");
       return;
     }
 
@@ -50,6 +53,7 @@ export default function FichadaPage() {
           })
         );
         showToast("Notificación", "Fichada creada con éxito", "success");
+        changeBackgroundColor("success");
       } else {
         // si hay un parte abierto, se cierra antes
         const partesAbiertos = await directus.request(
@@ -83,6 +87,7 @@ export default function FichadaPage() {
           })
         );
         showToast("Notificación", "Fichada actualizada con éxito", "success");
+        changeBackgroundColor("success");
       }
 
       inputRefEmpleado.current.focus();
@@ -90,6 +95,7 @@ export default function FichadaPage() {
     } catch (error) {
       console.log(error);
       showToast("Error", "No se pudo crear la fichada", "error");
+      changeBackgroundColor("error");
     }
   };
 

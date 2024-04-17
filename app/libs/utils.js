@@ -16,7 +16,9 @@ const isValidData = async (table, data) => {
       (res) => res.json()
     );
     // ADD extra data in "TAREAS" from resopnseEmp items
-    response[0].tareas = responseEmp.map((item) => item.codigo);
+    if (responseEmp.length > 0) {
+      response[0].tareas = responseEmp.map((item) => item.codigo);
+    }
   }
 
   if (response.length === 0) {
@@ -26,12 +28,21 @@ const isValidData = async (table, data) => {
     };
   } else {
     if (table === "empleado") {
-      return {
-        isValid: true,
-        description: response[0].descripcion,
-        inicioTurno: response[0].inicio,
-        tareas: response[0].tareas,
-      };
+      if (response[0].tareas) {
+        return {
+          isValid: true,
+          description: response[0].descripcion,
+          inicioTurno: response[0].inicio,
+          tareas: response[0].tareas,
+        };
+      } else {
+        return {
+          isValid: true,
+          description: response[0].descripcion,
+          inicioTurno: response[0].inicio,
+          tareas: [],
+        };
+      }
     } else {
       return {
         isValid: true,
@@ -41,4 +52,14 @@ const isValidData = async (table, data) => {
   }
 };
 
-export { isLoginModalType, isValidData };
+const changeBackgroundColor = (type) => {
+  const color = type === "success" ? "lightgreen" : "lightcoral";
+
+  const originalBackgroundColor = document.body.style.backgroundColor;
+  document.body.style.backgroundColor = color;
+  setTimeout(() => {
+    document.body.style.backgroundColor = originalBackgroundColor;
+  }, 250);
+};
+
+export { isLoginModalType, isValidData, changeBackgroundColor };

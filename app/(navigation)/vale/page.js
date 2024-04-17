@@ -57,14 +57,17 @@ export default function ValePage() {
   const handleSubmit = async (values) => {
     if (values.empleado === "" || values.ordenproduccion === "") {
       showToast("Error", "Todos los campos son obligatorios", "error");
+      changeBackgroundColor("error");
       return;
     }
     if (!empleado.isValid || !ordenproduccion.isValid) {
       showToast("Error", "Hay campos con errores de validación", "error");
+      changeBackgroundColor("error");
       return;
     }
     if (items.length === 0) {
       showToast("Error", "Debe agregar al menos un item", "error");
+      changeBackgroundColor("error");
       return;
     }
 
@@ -87,6 +90,7 @@ export default function ValePage() {
         "Permiso denegado. NO puede crear vale sin fichada regitrada.",
         "error"
       );
+      changeBackgroundColor("error");
       return;
     }
 
@@ -106,6 +110,7 @@ export default function ValePage() {
         );
       });
       showToast("Notificación", "Vale creado con éxito", "success");
+      changeBackgroundColor("success");
 
       inputRefEmpleado.current.focus();
       empleado.resetValues();
@@ -117,6 +122,7 @@ export default function ValePage() {
     } catch (error) {
       console.log(error);
       showToast("Error", "No se pudo crear el vale", "error");
+      changeBackgroundColor("error");
     }
   };
 

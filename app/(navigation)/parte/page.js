@@ -9,6 +9,7 @@ import useCustomToast from "@/app/hooks/useCustomToast";
 import useCustomInput from "@/app/hooks/useCustomInput";
 import InputField from "@/app/componets/inputs/InputField";
 import { useRouter } from "next/navigation";
+import { changeBackgroundColor } from "@/app/libs/utils";
 
 export default function PartePage() {
   const { directus, createItem, readItems, user, updateItem } = useAuth();
@@ -42,21 +43,26 @@ export default function PartePage() {
       values.tarea === ""
     ) {
       showToast("Error", "Todos los campos son obligatorios", "error");
+      changeBackgroundColor("error");
       return;
     }
 
     if (!empleado.isValid || !ordenproduccion.isValid || !tarea.isValid) {
       showToast("Error", "Hay campos con errores de validación", "error");
+      changeBackgroundColor("error");
       return;
     }
+    console.log(empleado.tareas);
+    console.log(tarea.value.trim());
 
-    const esTareaPermitida = empleado.tareas.includes(tarea.value);
+    const esTareaPermitida = empleado.tareas.includes(tarea.value.trim());
     if (!esTareaPermitida) {
       showToast(
         "Error",
         "Permiso denegado. Tarea no permitida para el empleado",
         "error"
       );
+      changeBackgroundColor("error");
       return;
     }
 
@@ -77,6 +83,7 @@ export default function PartePage() {
         "Permiso denegado. NO puede crear parte sin fichada regitrada.",
         "error"
       );
+      changeBackgroundColor("error");
       return;
     }
 
@@ -91,6 +98,7 @@ export default function PartePage() {
         "Permiso denegado. NO puede crear parte sin turno vigente.",
         "error"
       );
+      changeBackgroundColor("error");
       return;
     }
 
@@ -117,11 +125,12 @@ export default function PartePage() {
         createItem("parte", {
           empleado: values.empleado,
           ordenProduccion: values.ordenproduccion,
-          tarea: values.tarea,
+          tarea: values.tarea.trim(),
           inicio: ahora.toISOString(),
         })
       );
       showToast("Notificación", "Parte creado con éxito", "success");
+      changeBackgroundColor("success");
 
       inputRefEmpleado.current.focus();
       empleado.resetValues();
@@ -130,6 +139,7 @@ export default function PartePage() {
     } catch (error) {
       console.log(error);
       showToast("Error", "No se pudo crear el parte", "error");
+      changeBackgroundColor("error");
     }
   };
 
