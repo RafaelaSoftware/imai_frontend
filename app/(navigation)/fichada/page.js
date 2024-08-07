@@ -38,7 +38,29 @@ export default function FichadaPage() {
           limit: 1,
           sort: ["-ingreso"],
         })
-      );
+      )
+      
+      // si el empleado ficho en los ultimos 60 segundos, no se puede volver a fichar
+      if (result.length > 0) {
+        const fichada = result[0];
+        console.log(fichada);
+        // si tiene fichada fin que no sea null, que no se pueda volver a fichar
+         if (fichada.egreso !== null) {
+
+          // return;
+         }
+        const ingreso = new Date(fichada.ingreso);
+        console.log(ingreso);
+        const ahora = new Date().toISOString();
+        console.log(ahora);
+        const diferencia = (ahora - ingreso) / 1000;
+        console.log(diferencia)
+        if (diferencia < 60) {
+          console.log("No se puede volver a fichar en menos de 60 segundos");
+          return;
+        }
+      }
+      
 
       const esIngreso = result.length === 0 || result[0].egreso !== null;
       if (esIngreso) {

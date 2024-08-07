@@ -18,6 +18,7 @@ export default function PartePage() {
   const inputRefEmpleado = useRef(null);
   const inputRefOrdenProduccion = useRef(null);
   const inputRefTarea = useRef(null);
+  const inputRefConfirmacion = useRef(null);
 
   const empleado = useCustomInput(
     "",
@@ -33,18 +34,37 @@ export default function PartePage() {
     inputRefTarea,
     true
   );
-  const tarea = useCustomInput("", "tarea", inputRefTarea, null, true);
+  const tarea = useCustomInput("", "tarea", inputRefTarea, inputRefConfirmacion, true);
+  const confirmacion = useCustomInput("", "confirmacion", inputRefConfirmacion, null, true);
+
+  const resetValuesRefs = () => {
+    inputRefEmpleado.current.focus();
+      empleado.resetValues();
+      ordenproduccion.resetValues();
+      tarea.resetValues();
+      confirmacion.resetValues();
+  };
 
   const handleSubmit = async (values) => {
     if (
       values.empleado === "" ||
       values.ordenproduccion === "" ||
-      values.tarea === ""
+      values.tarea === "" ||
+      values.confirmacion === ""
     ) {
       showToast("Error", "Todos los campos son obligatorios", "error");
       return;
     }
 
+    if(confirmacion.values === "NO"){
+      resetValuesRefs();
+      showToast("Notificación", "Parte reiniciado", "success");
+      return;
+    }
+    if(confirmacion.values !== "SI"){
+      return;
+    }
+    
     if (!empleado.isValid || !ordenproduccion.isValid || !tarea.isValid) {
       showToast("Error", "Hay campos con errores de validación", "error");
       return;
@@ -123,10 +143,7 @@ export default function PartePage() {
       );
       showToast("Notificación", "Parte creado con éxito", "success");
 
-      inputRefEmpleado.current.focus();
-      empleado.resetValues();
-      ordenproduccion.resetValues();
-      tarea.resetValues();
+      
     } catch (error) {
       showToast("Error", "No se pudo crear el parte", "error");
     }
@@ -179,6 +196,16 @@ export default function PartePage() {
           message={tarea.message}
           inputRef={inputRefTarea}
         />
+        <InputField
+          id="confirmacion"
+          name="confirmacion"
+          type="text"
+          placeholder="Confirmación"
+          onChange={confirmacion.handleChange}
+          onKeyDown={confirmacion.handleKeyDown}
+          message={confirmacion.message}
+          inputRef={inputRefConfirmacion}
+        />
 
         <ButtonCustom
           onClick={() => {
@@ -186,6 +213,7 @@ export default function PartePage() {
               empleado: empleado.value,
               ordenproduccion: ordenproduccion.value,
               tarea: tarea.value,
+              confirmacion: confirmacion.value,
             });
           }}
         >
