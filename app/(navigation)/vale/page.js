@@ -9,6 +9,9 @@ import useCustomToast from "@/app/hooks/useCustomToast";
 import useCustomInput from "@/app/hooks/useCustomInput";
 import InputField from "@/app/componets/inputs/InputField";
 import { useRouter } from "next/navigation";
+import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
+
+import { v4 as uuidv4 } from "uuid";
 
 export default function ValePage() {
   const { directus, createItem, user, readItems } = useAuth();
@@ -54,14 +57,17 @@ export default function ValePage() {
   const handleSubmit = async (values) => {
     if (values.empleado === "" || values.ordenproduccion === "") {
       showToast("Error", "Todos los campos son obligatorios", "error");
+      changeBackgroundColor("error");
       return;
     }
     if (!empleado.isValid || !ordenproduccion.isValid) {
       showToast("Error", "Hay campos con errores de validación", "error");
+      changeBackgroundColor("error");
       return;
     }
     if (items.length === 0) {
       showToast("Error", "Debe agregar al menos un item", "error");
+      changeBackgroundColor("error");
       return;
     }
 
@@ -84,11 +90,14 @@ export default function ValePage() {
         "Permiso denegado. NO puede crear vale sin fichada regitrada.",
         "error"
       );
+      changeBackgroundColor("error");
       return;
     }
 
     try {
-      const id = crypto.randomUUID();
+      //const id = crypto.randomUUID();
+      const id = uuidv4();
+
       items.forEach(async (item) => {
         const result = await directus.request(
           createItem("vale", {
@@ -101,6 +110,7 @@ export default function ValePage() {
         );
       });
       showToast("Notificación", "Vale creado con éxito", "success");
+      changeBackgroundColor("success");
 
       inputRefEmpleado.current.focus();
       empleado.resetValues();
@@ -110,7 +120,9 @@ export default function ValePage() {
 
       setItems([]);
     } catch (error) {
+      console.log(error);
       showToast("Error", "No se pudo crear el vale", "error");
+      changeBackgroundColor("error");
     }
   };
 
@@ -126,6 +138,7 @@ export default function ValePage() {
     if (producto.isValid && cantidad.isValid) {
       const item = {
         producto: producto.value,
+        descripcion: producto.message,
         cantidad: cantidad.value,
       };
 
@@ -201,6 +214,38 @@ export default function ValePage() {
         >
           Confirmar
         </ButtonCustom>
+
+        {items.length > 0 && (
+          <Box>
+            <Text fontSize="lg" fontWeight="bold">
+              Productos a consumir
+            </Text>
+            <Flex gap={4} direction="column" alignItems="left">
+              {items.length > 0 && (
+                <Box>
+                  <Table variant="simple">
+                    <Thead>
+                      <Tr>
+                        <Th>Cantidad</Th>
+                        <Th>Código</Th>
+                        <Th>Descripción</Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      {items.map((item, index) => (
+                        <Tr key={index}>
+                          <Td>{item.cantidad}</Td>
+                          <Td>{item.producto}</Td>
+                          <Td>{item.descripcion}</Td>
+                        </Tr>
+                      ))}
+                    </Tbody>
+                  </Table>
+                </Box>
+              )}
+            </Flex>
+          </Box>
+        )}
       </Flex>
     </Box>
   );

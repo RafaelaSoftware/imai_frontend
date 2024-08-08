@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { isValidData } from "@/app/libs/utils";
+import { changeBackgroundColor, isValidData } from "@/app/libs/utils";
 import useCustomToast from "@/app/hooks/useCustomToast";
 
 const useCustomInput = (
@@ -48,9 +48,12 @@ const useCustomInput = (
           return;
         }
         setValid(true);
+        if (targetRef) {
+          targetRef.current.focus();
+        }
       }
 
-      if (value !== "") {
+      if (type !== "cantidad" && value !== "") {
         const result = await isValidData(type, value);
         setValid(result.isValid);
 
@@ -72,6 +75,7 @@ const useCustomInput = (
         } else {
           resetValues();
           showToast("Error", result.description, "error");
+          changeBackgroundColor("error");
         }
       }
     }

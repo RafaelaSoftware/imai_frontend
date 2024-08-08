@@ -60,7 +60,7 @@ export default function Home() {
             handleOption("fichada");
           }}
         >
-          FICHADA
+          FICHADA INGRESO / EGRESO
         </ButtonCustom>
       )}
       {user.role.permite_crear_parte && (
@@ -69,7 +69,7 @@ export default function Home() {
             handleOption("parte");
           }}
         >
-          PARTE
+          PARTE DE PRODUCCION
         </ButtonCustom>
       )}
       {user.role.permite_crear_vale && (
@@ -78,7 +78,7 @@ export default function Home() {
             handleOption("vale");
           }}
         >
-          VALE
+          VALE DE SALIDA
         </ButtonCustom>
       )}
     </Box>
