@@ -14,7 +14,6 @@ export default function PartePage() {
   const { directus, createItem, readItems, user, updateItem } = useAuth();
   const { showToast } = useCustomToast();
   const router = useRouter();
-
   const inputRefEmpleado = useRef(null);
   const inputRefOrdenProduccion = useRef(null);
   const inputRefTarea = useRef(null);
@@ -39,10 +38,10 @@ export default function PartePage() {
 
   const resetValuesRefs = () => {
     inputRefEmpleado.current.focus();
-      empleado.resetValues();
-      ordenproduccion.resetValues();
-      tarea.resetValues();
-      confirmacion.resetValues();
+    empleado.resetValues();
+    ordenproduccion.resetValues();
+    tarea.resetValues();
+    confirmacion.resetValues();
   };
 
   const handleSubmit = async (values) => {
@@ -56,20 +55,15 @@ export default function PartePage() {
       return;
     }
 
-    if(confirmacion.values === "NO"){
+    if (values.confirmacion === "NO") {
       resetValuesRefs();
-      showToast("Notificación", "Parte reiniciado", "success");
+      showToast("Notificación", "Parte reiniciado", "info");
       return;
     }
-    if(confirmacion.values !== "SI"){
-      return;
-    }
-    
     if (!empleado.isValid || !ordenproduccion.isValid || !tarea.isValid) {
       showToast("Error", "Hay campos con errores de validación", "error");
       return;
     }
-
     const esTareaPermitida = empleado.tareas.includes(tarea.value);
     if (!esTareaPermitida) {
       showToast(
@@ -143,11 +137,23 @@ export default function PartePage() {
       );
       showToast("Notificación", "Parte creado con éxito", "success");
 
-      
+      resetValuesRefs();
     } catch (error) {
       showToast("Error", "No se pudo crear el parte", "error");
     }
   };
+  const handleConfirmacion = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      e.stopPropagation();
+      handleSubmit({
+        empleado: empleado.value,
+        ordenproduccion: ordenproduccion.value,
+        tarea: tarea.value,
+        confirmacion: confirmacion.value,
+      });
+    }
+  }
 
   useEffect(() => {
     if (!user) {
@@ -202,7 +208,7 @@ export default function PartePage() {
           type="text"
           placeholder="Confirmación"
           onChange={confirmacion.handleChange}
-          onKeyDown={confirmacion.handleKeyDown}
+          onKeyDown={handleConfirmacion}
           message={confirmacion.message}
           inputRef={inputRefConfirmacion}
         />
