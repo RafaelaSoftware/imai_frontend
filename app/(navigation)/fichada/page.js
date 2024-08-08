@@ -66,6 +66,7 @@ export default function FichadaPage() {
         result = await directus.request(
           createItem("fichada", {
             empleado: values.empleado,
+            empleado_descripcion: empleado.message, 
             ingreso: new Date().toISOString(),
           })
         );

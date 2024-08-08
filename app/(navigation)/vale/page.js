@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
 
 import { v4 as uuidv4 } from "uuid";
+import { changeBackgroundColor } from "@/app/libs/utils";
 
 export default function ValePage() {
   const { directus, createItem, user, readItems } = useAuth();
@@ -103,8 +104,11 @@ export default function ValePage() {
           createItem("vale", {
             transaccion: id,
             empleado: values.empleado,
+            empleado_descripcion: empleado.message,
             ordenProduccion: values.ordenproduccion,
+            ordenProduccion_descripcion: ordenproduccion.message,
             producto: item.producto,
+            producto_descripcion: item.descripcion,
             cantidad: item.cantidad,
           })
         );

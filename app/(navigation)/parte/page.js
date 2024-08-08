@@ -137,8 +137,11 @@ export default function PartePage() {
       const result = await directus.request(
         createItem("parte", {
           empleado: values.empleado,
+          empleado_descripcion: empleado.message,
           ordenProduccion: values.ordenproduccion,
+          ordenProduccion_descripcion: ordenproduccion.message,
           tarea: values.tarea.trim(),
+          tarea_descripcion: tarea.message,
           inicio: ahora.toISOString(),
         })
       );
