@@ -101,8 +101,8 @@ export default function ModalTiempoOP({isOpen, onClose}) {
             <Table variant="simple">
                     <Thead>
                         <Tr>
-                            <Th>Orden Produccion</Th>
                             <Th>Tarea</Th>
+                            <Th>Tiempo acumulado</Th>
                         </Tr>
                     </Thead>
                     <Tbody>
