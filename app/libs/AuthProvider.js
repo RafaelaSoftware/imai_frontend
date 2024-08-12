@@ -37,9 +37,11 @@ export const AuthProvider = ({ children }) => {
           fields: ["id", "email", "first_name", "last_name", "role.*"],
         })
       );
-
       if (me) {
         setUser(me);
+      }
+      if (me && me.role.name !== "Operario") {
+        router.push("/dashboard");
       }
     } catch (error) {
       setUser(null);
