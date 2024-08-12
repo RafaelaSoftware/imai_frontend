@@ -40,9 +40,6 @@ export const AuthProvider = ({ children }) => {
       if (me) {
         setUser(me);
       }
-      if (me && me.role.name !== "Operario") {
-        router.push("/dashboard");
-      }
     } catch (error) {
       setUser(null);
       setLoading(false);
