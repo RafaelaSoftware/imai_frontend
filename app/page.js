@@ -45,8 +45,14 @@ export default function Home() {
       </Box>
     );
   }
+  if (user && user.role.name !== "Operarios") {
+    console.log(user.role.name);
+    return <Dashboard />;
+  }
+  
 
-  return (user && user.role.name) == "Operario" ? (
+
+  return (
     <Box
       display="flex"
       justifyContent="center"
@@ -83,5 +89,5 @@ export default function Home() {
         </ButtonCustom>
       )}
     </Box>
-  ) : <Dashboard/>
+  )
 }
