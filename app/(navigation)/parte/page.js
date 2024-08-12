@@ -15,10 +15,10 @@ export default function PartePage() {
   const { directus, createItem, readItems, user, updateItem } = useAuth();
   const { showToast } = useCustomToast();
   const router = useRouter();
-
   const inputRefEmpleado = useRef(null);
   const inputRefOrdenProduccion = useRef(null);
   const inputRefTarea = useRef(null);
+  const inputRefConfirmacion = useRef(null);
 
   const empleado = useCustomInput(
     "",
@@ -34,26 +34,39 @@ export default function PartePage() {
     inputRefTarea,
     true
   );
-  const tarea = useCustomInput("", "tarea", inputRefTarea, null, true);
+  const tarea = useCustomInput("", "tarea", inputRefTarea, inputRefConfirmacion, true);
+  const confirmacion = useCustomInput("", "confirmacion", inputRefConfirmacion, null, true);
+
+  const resetValuesRefs = () => {
+    inputRefEmpleado.current.focus();
+    empleado.resetValues();
+    ordenproduccion.resetValues();
+    tarea.resetValues();
+    confirmacion.resetValues();
+  };
 
   const handleSubmit = async (values) => {
     if (
       values.empleado === "" ||
       values.ordenproduccion === "" ||
-      values.tarea === ""
+      values.tarea === "" ||
+      values.confirmacion === ""
     ) {
       showToast("Error", "Todos los campos son obligatorios", "error");
       changeBackgroundColor("error");
       return;
     }
 
+    if (values.confirmacion === "NO") {
+      resetValuesRefs();
+      showToast("Notificación", "Parte reiniciado", "info");
+      return;
+    }
     if (!empleado.isValid || !ordenproduccion.isValid || !tarea.isValid) {
       showToast("Error", "Hay campos con errores de validación", "error");
       changeBackgroundColor("error");
       return;
     }
-    console.log(empleado.tareas);
-    console.log(tarea.value.trim());
 
     const esTareaPermitida = empleado.tareas.includes(tarea.value.trim());
     if (!esTareaPermitida) {
@@ -124,24 +137,36 @@ export default function PartePage() {
       const result = await directus.request(
         createItem("parte", {
           empleado: values.empleado,
+          empleado_descripcion: empleado.message,
           ordenProduccion: values.ordenproduccion,
+          ordenProduccion_descripcion: ordenproduccion.message,
           tarea: values.tarea.trim(),
+          tarea_descripcion: tarea.message,
           inicio: ahora.toISOString(),
         })
       );
       showToast("Notificación", "Parte creado con éxito", "success");
       changeBackgroundColor("success");
 
-      inputRefEmpleado.current.focus();
-      empleado.resetValues();
-      ordenproduccion.resetValues();
-      tarea.resetValues();
+      resetValuesRefs();
     } catch (error) {
       console.log(error);
       showToast("Error", "No se pudo crear el parte", "error");
       changeBackgroundColor("error");
     }
   };
+  const handleConfirmacion = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      e.stopPropagation();
+      handleSubmit({
+        empleado: empleado.value,
+        ordenproduccion: ordenproduccion.value,
+        tarea: tarea.value,
+        confirmacion: confirmacion.value,
+      });
+    }
+  }
 
   useEffect(() => {
     if (!user) {
@@ -190,6 +215,16 @@ export default function PartePage() {
           message={tarea.message}
           inputRef={inputRefTarea}
         />
+        <InputField
+          id="confirmacion"
+          name="confirmacion"
+          type="text"
+          placeholder="Confirmación"
+          onChange={confirmacion.handleChange}
+          onKeyDown={handleConfirmacion}
+          message={confirmacion.message}
+          inputRef={inputRefConfirmacion}
+        />
 
         <ButtonCustom
           onClick={() => {
@@ -197,6 +232,7 @@ export default function PartePage() {
               empleado: empleado.value,
               ordenproduccion: ordenproduccion.value,
               tarea: tarea.value,
+              confirmacion: confirmacion.value,
             });
           }}
         >

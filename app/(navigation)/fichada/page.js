@@ -10,6 +10,7 @@ import useCustomInput from "@/app/hooks/useCustomInput";
 import InputField from "@/app/componets/inputs/InputField";
 import { useRouter } from "next/navigation";
 import { changeBackgroundColor } from "@/app/libs/utils";
+import moment from 'moment-timezone';
 
 export default function FichadaPage() {
   const { directus, createItem, readItems, updateItem, user } = useAuth();
@@ -41,7 +42,23 @@ export default function FichadaPage() {
           limit: 1,
           sort: ["-ingreso"],
         })
-      );
+      )
+      // si el empleado ficho en los ultimos 60 segundos, no se puede volver a fichar
+      if (result.length > 0) {
+        const fichada = result[0];
+
+        let ultimoNovedad = new moment.tz(fichada.egreso ? fichada.egreso : fichada.ingreso, "America/Argentina/Buenos_Aires")
+        ultimoNovedad = ultimoNovedad.subtract(3, 'hours');
+        const ahora = new moment.tz("America/Argentina/Buenos_Aires")
+        const diferencia = ahora.diff(ultimoNovedad, 'seconds');
+        if (diferencia < 60) {
+          inputRefEmpleado.current.focus();
+          empleado.resetValues();
+          console.log("No se puede volver a fichar en menos de 60 segundos");
+          return;
+        }
+      }
+      
 
       const esIngreso = result.length === 0 || result[0].egreso !== null;
 
@@ -49,6 +66,7 @@ export default function FichadaPage() {
         result = await directus.request(
           createItem("fichada", {
             empleado: values.empleado,
+            empleado_descripcion: empleado.message, 
             ingreso: new Date().toISOString(),
           })
         );
