@@ -27,14 +27,15 @@ export default function PartePage() {
     inputRefOrdenProduccion,
     true
   );
+  const tarea = useCustomInput("", "tarea", inputRefTarea, inputRefConfirmacion, true);
   const ordenproduccion = useCustomInput(
     "",
     "ordenproduccion",
     inputRefOrdenProduccion,
     inputRefTarea,
-    true
+    true,
+    tarea.setValue
   );
-  const tarea = useCustomInput("", "tarea", inputRefTarea, inputRefConfirmacion, true);
   const confirmacion = useCustomInput("", "confirmacion", inputRefConfirmacion, null, true);
 
   const resetValuesRefs = () => {
@@ -168,6 +169,11 @@ export default function PartePage() {
     }
   }
 
+  const handleOpAutomatica = async (e) => {
+    ordenproduccion.handleKeyDown(e);
+  }
+
+
   useEffect(() => {
     if (!user) {
       router.push("/");
@@ -201,7 +207,7 @@ export default function PartePage() {
           type="text"
           placeholder="Orden Produccion"
           onChange={ordenproduccion.handleChange}
-          onKeyDown={ordenproduccion.handleKeyDown}
+          onKeyDown={(e)=>handleOpAutomatica(e)}
           message={ordenproduccion.message}
           inputRef={inputRefOrdenProduccion}
         />

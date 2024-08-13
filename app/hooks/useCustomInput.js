@@ -7,7 +7,8 @@ const useCustomInput = (
   type,
   inputRef,
   targetRef,
-  showMessage
+  showMessage,
+  setNextValue
 ) => {
   const [value, setValue] = useState(initialValue);
   const [message, setMessage] = useState("");
@@ -62,7 +63,26 @@ const useCustomInput = (
             setMessage(result.description);
           }
           if (targetRef) {
-            targetRef.current.focus();
+            if (result.tarea && result.tarea_descripcion) {
+              targetRef.current.focus();
+              targetRef.current.value = result.tarea;
+              setNextValue(result.tarea)
+                // Creamos el evento para simular el keydown de la tecla Enter
+                const keyDownEvent = new KeyboardEvent('keydown', {
+                  key: 'Enter',
+                  code: 'Enter',
+                  keyCode: 13,
+                  which: 13,
+                  bubbles: true,
+                });
+                setTimeout(() => {
+                  targetRef.current.dispatchEvent(keyDownEvent);
+                }, 1000);
+
+            } else {
+
+              targetRef.current.focus();
+            }
           }
 
           if (type === "empleado") {
@@ -83,6 +103,7 @@ const useCustomInput = (
 
   return {
     value,
+    setValue,
     message,
     inputRef,
     targetRef,

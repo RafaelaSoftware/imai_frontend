@@ -47,6 +47,8 @@ const isValidData = async (table, data) => {
       return {
         isValid: true,
         description: response[0].descripcion,
+        tarea: response[0].tarea,
+        tarea_descripcion: response[0].tarea_descripcion,
       };
     }
   }
