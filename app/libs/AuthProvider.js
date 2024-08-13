@@ -37,7 +37,6 @@ export const AuthProvider = ({ children }) => {
           fields: ["id", "email", "first_name", "last_name", "role.*"],
         })
       );
-
       if (me) {
         setUser(me);
       }

@@ -5,6 +5,7 @@ import ButtonCustom from "./componets/buttons/ButtonCustom";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Text } from "@chakra-ui/react";
+import Dashboard from "./componets/dashboard/Dashboard";
 
 export default function Home() {
   const { loading, user } = useAuth();
@@ -44,6 +45,12 @@ export default function Home() {
       </Box>
     );
   }
+  if (user && user.role.name !== "Operarios") {
+    console.log(user.role.name);
+    return <Dashboard />;
+  }
+  
+
 
   return (
     <Box
@@ -82,5 +89,5 @@ export default function Home() {
         </ButtonCustom>
       )}
     </Box>
-  );
+  )
 }
