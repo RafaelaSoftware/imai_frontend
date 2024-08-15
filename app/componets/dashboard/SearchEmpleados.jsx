@@ -110,8 +110,6 @@ export default function SearchEmpleados({ setEmpleados }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const result = await fetchEmpleados();
-
-    console.log(result);
     setEmpleados(result);
   };
 
