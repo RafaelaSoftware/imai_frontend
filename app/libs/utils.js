@@ -1,3 +1,4 @@
+import moment from "moment-timezone";
 import { LOGIN } from "../enums/AuthModalTypes";
 
 const isLoginModalType = (type) => {
@@ -64,4 +65,12 @@ const changeBackgroundColor = (type) => {
   }, 250);
 };
 
-export { isLoginModalType, isValidData, changeBackgroundColor };
+const formatDate = (date) => {
+  if (!date) return "";
+
+  return moment(date)
+    .tz("America/Argentina/Buenos_Aires")
+    .format("DD/MM/YYYY HH:mm:ss");
+};
+
+export { isLoginModalType, isValidData, changeBackgroundColor, formatDate };

@@ -19,7 +19,6 @@ export default function Home() {
   }
 
   if (user && user.role.name !== "Operarios") {
-    console.log(user.role.name);
     return <Dashboard />;
   }
 
