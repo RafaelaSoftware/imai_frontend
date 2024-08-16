@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useDebounce } from "@uidotdev/usehooks";
 import moment from "moment-timezone";
 
-export default function SearchEmpleados({ setEmpleados }) {
+export default function SearchEmpleados({ setEmpleados, refresh }) {
   const { directus, readItems } = useAuth();
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
@@ -24,9 +24,9 @@ export default function SearchEmpleados({ setEmpleados }) {
                 inicio: {
                   _gte: new moment().startOf("day").toISOString(),
                 },
-                fin: {
-                  _null: true,
-                },
+                // fin: {
+                //   _null: true,
+                // },
               },
               {
                 _or: [
@@ -47,7 +47,7 @@ export default function SearchEmpleados({ setEmpleados }) {
           limit: -1,
         })
       );
-      return result.length >= 0 ? result[0] : null;
+      return result.length >= 0 ? result : null;
     } catch (error) {
       return null;
     }
@@ -90,17 +90,18 @@ export default function SearchEmpleados({ setEmpleados }) {
         })
       );
 
-      const empleadosConParte = await Promise.all(
+      const empleadosConPartes = await Promise.all(
         empleadosResult.map(async (empleado) => {
-          empleado.parte = await fetchParte(
+          empleado.partes = await fetchParte(
             empleado.empleado,
             empleado.empleado_descripcion
           );
           return empleado;
         })
       );
+      console.log(empleadosConPartes);
 
-      return empleadosConParte;
+      return empleadosConPartes;
     } catch (error) {
       console.error(error);
       return [];
@@ -122,7 +123,7 @@ export default function SearchEmpleados({ setEmpleados }) {
     };
 
     fetchData();
-  }, [debouncedSearch]);
+  }, [debouncedSearch, refresh]);
   return (
     <Flex alignItems={"center"} justifyContent={"flex-end"}>
       <form
