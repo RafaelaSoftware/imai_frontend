@@ -99,8 +99,7 @@ export default function SearchEmpleados({ setEmpleados, refresh }) {
           return empleado;
         })
       );
-      console.log(empleadosConPartes);
-
+      
       return empleadosConPartes;
     } catch (error) {
       console.error(error);

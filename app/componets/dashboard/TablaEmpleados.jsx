@@ -15,7 +15,7 @@ import { useState } from "react";
 
 import { FaArrowUpRightFromSquare } from "react-icons/fa6";
 import SearchEmpleados from "./SearchEmpleados";
-import DetallesParte from "./modals/DetallesParte";
+import DetallesParte from "./modals/DetallesParte/DetallesParte";
 import { formatDate } from "@/app/libs/utils";
 
 export default function TablaEmpleados() {
@@ -26,7 +26,6 @@ export default function TablaEmpleados() {
   const [selectedEmpleado, setSelectedEmpleado] = useState(null);
 
   const handleSelectedEmpleado = (empleado) => () => {
-    console.log(empleado);
     setSelectedEmpleado(empleado);
     onOpen();
   };
@@ -51,7 +50,6 @@ export default function TablaEmpleados() {
                 <Td>{item.empleado_descripcion}</Td>
                 <Td>{formatDate(item.ingreso)}</Td>
                 <Td>
-                  {/* TODO: Cambiar a si almenos esta haciendo una tarea hoy */}
                   {item.ingreso && (
                     <Badge
                       colorScheme={
