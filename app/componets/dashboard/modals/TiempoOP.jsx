@@ -24,6 +24,7 @@ import { useEffect, useState } from "react";
 import { useDebounce } from "@uidotdev/usehooks";
 import { FaArrowUpRightFromSquare } from "react-icons/fa6";
 import ResumenOP from "./ResumenOP";
+import ProgressBar from "../../ui/ProgressBar";
 
 export default function TiempoOP({ isOpen, onClose }) {
   const {
@@ -51,7 +52,19 @@ export default function TiempoOP({ isOpen, onClose }) {
         })
       );
       const resultFiltered = handleFilter(result);
-      return resultFiltered;
+      const resultHorasEstimadas = await Promise.all(
+        resultFiltered.map(async (item) => {
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/ordenproduccion/${item.ordenProduccion}`
+          );
+          const data = await response.json();
+          return {
+            ...item,
+            horas_estimadas: data[0].horas_estimadas,
+          };
+        })
+      );
+      return resultHorasEstimadas;
     } catch (error) {
       console.log(error);
       return [];
@@ -152,6 +165,7 @@ export default function TiempoOP({ isOpen, onClose }) {
               <Tr>
                 <Th>Tarea</Th>
                 <Th>Tiempo acumulado</Th>
+                <Th>Progreso</Th>
                 <Th>Acción</Th>
               </Tr>
             </Thead>
@@ -160,6 +174,12 @@ export default function TiempoOP({ isOpen, onClose }) {
                 <Tr key={item.tarea}>
                   <Td>{item.tarea}</Td>
                   <Td>{item.tiempoAcumulado} hs</Td>
+                  <Td>
+                    <ProgressBar
+                      horasEjecutadas={parseFloat(item.tiempoAcumulado)}
+                      horasEstimadas={item.horas_estimadas}
+                    />
+                  </Td>
                   <Td>
                     <ButtonCustom
                       width={"max-content"}
