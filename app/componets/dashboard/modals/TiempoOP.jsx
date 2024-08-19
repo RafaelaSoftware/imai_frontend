@@ -22,13 +22,21 @@ import ButtonCustom from "../../buttons/ButtonCustom";
 import { useAuth } from "@/app/libs/AuthProvider";
 import { useEffect, useState } from "react";
 import { useDebounce } from "@uidotdev/usehooks";
+import { FaArrowUpRightFromSquare } from "react-icons/fa6";
+import ResumenOP from "./ResumenOP";
 
 export default function TiempoOP({ isOpen, onClose }) {
+  const {
+    isOpen: isOpenResumen,
+    onOpen: onOpenResumen,
+    onClose: onCloseResumen,
+  } = useDisclosure();
   const { directus, readItems } = useAuth();
-
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
   const [ordenes, setOrdenes] = useState([]);
+
+  const [selectedOp, setSelectedOp] = useState(null);
 
   const fetchOrdenes = async () => {
     try {
@@ -53,8 +61,11 @@ export default function TiempoOP({ isOpen, onClose }) {
     const grouped = result.reduce((acc, item) => {
       if (!acc[item.tarea]) {
         acc[item.tarea] = {
-          tarea: `${item.tarea}-${item.tarea_descripcion}`,
+          tarea: `${item.tarea} - ${item.tarea_descripcion}`,
           tiempoAcumulado: 0,
+          tareasIndividuales: [],
+          ordenProduccion: item.ordenProduccion,
+          ordenProduccion_descripcion: item.ordenProduccion_descripcion,
         };
       }
       const fin = item.fin
@@ -62,6 +73,7 @@ export default function TiempoOP({ isOpen, onClose }) {
         : new Date().setHours(new Date().getHours() + 3);
       const duracion = (new Date(fin) - new Date(item.inicio)) / 3600000;
       acc[item.tarea].tiempoAcumulado += duracion;
+      acc[item.tarea].tareasIndividuales.push(item);
       return acc;
     }, {});
 
@@ -79,6 +91,11 @@ export default function TiempoOP({ isOpen, onClose }) {
   const handleChange = (e) => {
     e.preventDefault();
     setSearch(e.target.value);
+  };
+
+  const handleSelectedOp = (op) => () => {
+    setSelectedOp(op);
+    onOpenResumen();
   };
 
   useEffect(() => {
@@ -135,6 +152,7 @@ export default function TiempoOP({ isOpen, onClose }) {
               <Tr>
                 <Th>Tarea</Th>
                 <Th>Tiempo acumulado</Th>
+                <Th>Acción</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -142,10 +160,27 @@ export default function TiempoOP({ isOpen, onClose }) {
                 <Tr key={item.tarea}>
                   <Td>{item.tarea}</Td>
                   <Td>{item.tiempoAcumulado} hs</Td>
+                  <Td>
+                    <ButtonCustom
+                      width={"max-content"}
+                      borderRadius={"4"}
+                      size={"xs"}
+                      onClick={handleSelectedOp(item)}
+                    >
+                      <FaArrowUpRightFromSquare />
+                    </ButtonCustom>
+                  </Td>
                 </Tr>
               ))}
             </Tbody>
           </Table>
+          {selectedOp && (
+            <ResumenOP
+              isOpen={isOpenResumen}
+              onClose={onCloseResumen}
+              op={selectedOp}
+            />
+          )}
         </ModalBody>
 
         <ModalFooter>
