@@ -62,19 +62,21 @@ export default function ResumenOP({ isOpen, onClose, op }) {
             </Thead>
 
             <Tbody>
-              {op.tareasIndividuales.map((tarea) => (
-                <Tr key={tarea.id}>
-                  <Td>{tarea.empleado_descripcion}</Td>
-                  <Td>{formatDate(tarea.inicio)}</Td>
-                  <Td>
-                    {!tarea.fin ? (
-                      <Badge colorScheme={"green"}>En curso</Badge>
-                    ) : (
-                      formatDate(tarea.fin)
-                    )}
-                  </Td>
-                </Tr>
-              ))}
+              {op.tareasIndividuales
+                .sort((a, b) => new Date(b.inicio) - new Date(a.inicio))
+                .map((tarea) => (
+                  <Tr key={tarea.id}>
+                    <Td>{tarea.empleado_descripcion}</Td>
+                    <Td>{formatDate(tarea.inicio)}</Td>
+                    <Td>
+                      {!tarea.fin ? (
+                        <Badge colorScheme={"green"}>En curso</Badge>
+                      ) : (
+                        formatDate(tarea.fin)
+                      )}
+                    </Td>
+                  </Tr>
+                ))}
             </Tbody>
           </Table>
         </ModalBody>
