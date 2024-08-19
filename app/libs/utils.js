@@ -70,7 +70,8 @@ const formatDate = (date) => {
 
   return moment(date)
     .tz("America/Argentina/Buenos_Aires")
-    .format("DD/MM/YYYY HH:mm:ss");
+    .subtract(3, "hours")
+    .format("DD/MM/YYYY HH:mm");
 };
 
 export { isLoginModalType, isValidData, changeBackgroundColor, formatDate };
