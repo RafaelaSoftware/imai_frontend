@@ -46,7 +46,7 @@ export default function TiempoOP({ isOpen, onClose }) {
         readItems("parte", {
           filter: {
             _and: [
-              { ordenProduccion: { _eq: search } },
+              { ordenProduccion: { _eq: search.trim() } },
               //    {fin: { _null: false } },
             ],
           },
