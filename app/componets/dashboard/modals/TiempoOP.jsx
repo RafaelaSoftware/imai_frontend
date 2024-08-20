@@ -17,6 +17,7 @@ import {
   Th,
   Td,
   Tbody,
+  Divider,
 } from "@chakra-ui/react";
 import ButtonCustom from "../../buttons/ButtonCustom";
 import { useAuth } from "@/app/libs/AuthProvider";
@@ -51,20 +52,8 @@ export default function TiempoOP({ isOpen, onClose }) {
           },
         })
       );
-      const resultFiltered = handleFilter(result);
-      const resultHorasEstimadas = await Promise.all(
-        resultFiltered.map(async (item) => {
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/ordenproduccion/${item.ordenProduccion}`
-          );
-          const data = await response.json();
-          return {
-            ...item,
-            horas_estimadas: data[0].horas_estimadas,
-          };
-        })
-      );
-      return resultHorasEstimadas;
+      const resultGrouped = handleFilter(result);
+      return resultGrouped;
     } catch (error) {
       console.log(error);
       return [];
@@ -120,9 +109,14 @@ export default function TiempoOP({ isOpen, onClose }) {
   }, [debouncedSearch]);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size={"3xl"}>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size={"3xl"}
+      scrollBehavior="inside"
+    >
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent height={"100%"} bgColor={"white"}>
         <ModalHeader>Listado Orden Producción</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
@@ -160,12 +154,15 @@ export default function TiempoOP({ isOpen, onClose }) {
             </form>
           </Flex>
 
+          <Box p={4}>
+            <ProgressBar ordenes={ordenes} />
+          </Box>
+
           <Table variant="simple">
             <Thead>
               <Tr>
                 <Th>Tarea</Th>
                 <Th>Tiempo acumulado</Th>
-                <Th>Progreso</Th>
                 <Th>Acción</Th>
               </Tr>
             </Thead>
@@ -174,12 +171,6 @@ export default function TiempoOP({ isOpen, onClose }) {
                 <Tr key={item.tarea}>
                   <Td>{item.tarea}</Td>
                   <Td>{item.tiempoAcumulado} hs</Td>
-                  <Td>
-                    <ProgressBar
-                      horasEjecutadas={parseFloat(item.tiempoAcumulado)}
-                      horasEstimadas={item.horas_estimadas}
-                    />
-                  </Td>
                   <Td>
                     <ButtonCustom
                       width={"max-content"}
@@ -204,7 +195,11 @@ export default function TiempoOP({ isOpen, onClose }) {
         </ModalBody>
 
         <ModalFooter>
-          <Button onClick={onClose}>Cerrar</Button>
+          <Flex flexDirection={"column"} width={"100%"}>
+            <Flex justifyContent={"flex-end"}>
+              <Button onClick={onClose}>Cerrar</Button>
+            </Flex>
+          </Flex>
         </ModalFooter>
       </ModalContent>
     </Modal>

@@ -31,7 +31,12 @@ export default function ResumenOP({ isOpen, onClose, op }) {
   4;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size={"4xl"}>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size={"4xl"}
+      scrollBehavior="inside"
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Resumen - {op.ordenProduccion_descripcion}</ModalHeader>

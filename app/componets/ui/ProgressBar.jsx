@@ -1,7 +1,49 @@
 import { Box, Progress, Text } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 
-const ProgressBar = ({ horasEstimadas, horasEjecutadas }) => {
-  const porcentaje = (horasEjecutadas / horasEstimadas) * 100;
+const ProgressBar = ({ ordenes }) => {
+  const [horasEjecutadas, setHorasEjecutadas] = useState(0);
+  const [horasEstimadas, setHorasEstimadas] = useState(0);
+
+  const [porcentaje, setPorcentaje] = useState(0);
+
+  const fetchHorasEstimadas = async (ordenProduccion) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/ordenproduccion/${ordenProduccion}`
+      );
+      const data = await response.json();
+      return data[0].horas_estimadas;
+    } catch (error) {
+      return 0;
+    }
+  };
+
+  useEffect(() => {
+    const fetchHours = async () => {
+      try {
+        const totalHoursOP = ordenes.reduce(
+          (acc, item) => acc + parseFloat(item.tiempoAcumulado),
+          0
+        );
+
+        let horasEstimadas = await fetchHorasEstimadas(
+          ordenes[0].ordenProduccion
+        );
+
+        setHorasEjecutadas(totalHoursOP);
+        setHorasEstimadas(horasEstimadas);
+        const porcentaje = (totalHoursOP / horasEstimadas) * 100;
+        setPorcentaje(porcentaje);
+      } catch (error) {
+        setHorasEjecutadas(0);
+        setHorasEstimadas(0);
+        setPorcentaje(0);
+      }
+    };
+    fetchHours();
+  }, [ordenes]);
+
   return (
     <Box w="100%">
       <Box position={"relative"}>
@@ -16,10 +58,12 @@ const ProgressBar = ({ horasEstimadas, horasEjecutadas }) => {
           fontSize={"sm"}
           color={"white"}
         >
-          {Math.round(porcentaje)}%
+          {isNaN(porcentaje) || !isFinite(porcentaje)
+            ? "0%"
+            : `${Math.round(porcentaje)}% `}
         </Text>
         <Progress
-          value={porcentaje}
+          value={porcentaje || 0}
           colorScheme="blue"
           color={"red"}
           background={"#c1c1c1"}
