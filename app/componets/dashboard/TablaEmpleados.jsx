@@ -15,12 +15,13 @@ import { useState } from "react";
 
 import { FaArrowUpRightFromSquare } from "react-icons/fa6";
 import SearchEmpleados from "./SearchEmpleados";
-import DetallesParte from "./modals/DetallesParte";
+import DetallesParte from "./modals/DetallesParte/DetallesParte";
 import { formatDate } from "@/app/libs/utils";
 
 export default function TablaEmpleados() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [empleados, setEmpleados] = useState([]);
+  const [refresh, setRefresh] = useState(false);
 
   const [selectedEmpleado, setSelectedEmpleado] = useState(null);
 
@@ -31,7 +32,7 @@ export default function TablaEmpleados() {
 
   return (
     <>
-      <SearchEmpleados setEmpleados={setEmpleados} />
+      <SearchEmpleados setEmpleados={setEmpleados} refresh={refresh} />
 
       <Box mt={4}>
         <Table variant="simple">
@@ -50,8 +51,16 @@ export default function TablaEmpleados() {
                 <Td>{formatDate(item.ingreso)}</Td>
                 <Td>
                   {item.ingreso && (
-                    <Badge colorScheme={item.parte ? "green" : "gray"}>
-                      {item.parte ? "En curso" : "Disponible"}
+                    <Badge
+                      colorScheme={
+                        item.partes.find((parte) => parte.fin == null)
+                          ? "green"
+                          : "gray"
+                      }
+                    >
+                      {item.partes.find((parte) => parte.fin == null)
+                        ? "En curso"
+                        : "Disponible"}
                     </Badge>
                   )}
                 </Td>
@@ -62,7 +71,6 @@ export default function TablaEmpleados() {
                     borderRadius={"4"}
                     size={"xs"}
                     onClick={handleSelectedEmpleado(item)}
-                    isDisabled={!item.parte}
                   >
                     <FaArrowUpRightFromSquare />
                   </ButtonCustom>
@@ -78,6 +86,7 @@ export default function TablaEmpleados() {
           isOpen={isOpen}
           onClose={onClose}
           empleado={selectedEmpleado}
+          setRefresh={setRefresh}
         />
       )}
     </>
