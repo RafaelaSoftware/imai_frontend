@@ -32,12 +32,12 @@ export default function SearchEmpleados({ setEmpleados, refresh }) {
                 _or: [
                   {
                     empleado: {
-                      _eq: empleado,
+                      _eq: empleado.trim(),
                     },
                   },
                   {
                     empleado_descripcion: {
-                      _icontains: empleado_descripcion,
+                      _icontains: empleado_descripcion.trim(),
                     },
                   },
                 ],
