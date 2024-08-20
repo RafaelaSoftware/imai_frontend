@@ -17,6 +17,7 @@ import {
   Th,
   Td,
   Tbody,
+  Divider,
 } from "@chakra-ui/react";
 import ButtonCustom from "../../buttons/ButtonCustom";
 import { useAuth } from "@/app/libs/AuthProvider";
@@ -24,6 +25,7 @@ import { useEffect, useState } from "react";
 import { useDebounce } from "@uidotdev/usehooks";
 import { FaArrowUpRightFromSquare } from "react-icons/fa6";
 import ResumenOP from "./ResumenOP";
+import ProgressBar from "../../ui/ProgressBar";
 
 export default function TiempoOP({ isOpen, onClose }) {
   const {
@@ -50,8 +52,8 @@ export default function TiempoOP({ isOpen, onClose }) {
           },
         })
       );
-      const resultFiltered = handleFilter(result);
-      return resultFiltered;
+      const resultGrouped = handleFilter(result);
+      return resultGrouped;
     } catch (error) {
       console.log(error);
       return [];
@@ -107,9 +109,14 @@ export default function TiempoOP({ isOpen, onClose }) {
   }, [debouncedSearch]);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size={"3xl"}>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size={"3xl"}
+      scrollBehavior="inside"
+    >
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent height={"100%"} bgColor={"white"}>
         <ModalHeader>Listado Orden Producción</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
@@ -146,6 +153,10 @@ export default function TiempoOP({ isOpen, onClose }) {
               </Flex>
             </form>
           </Flex>
+
+          <Box p={4}>
+            <ProgressBar ordenes={ordenes} />
+          </Box>
 
           <Table variant="simple">
             <Thead>
@@ -184,7 +195,11 @@ export default function TiempoOP({ isOpen, onClose }) {
         </ModalBody>
 
         <ModalFooter>
-          <Button onClick={onClose}>Cerrar</Button>
+          <Flex flexDirection={"column"} width={"100%"}>
+            <Flex justifyContent={"flex-end"}>
+              <Button onClick={onClose}>Cerrar</Button>
+            </Flex>
+          </Flex>
         </ModalFooter>
       </ModalContent>
     </Modal>
