@@ -5,7 +5,7 @@ export default function ButtonCustom({ children, ...props }) {
     <Button
       variant="solid"
       size="lg"
-      borderRadius="20px"
+      borderRadius="full"
       color="white"
       width="full"
       bgColor="own"
