@@ -94,7 +94,6 @@ export default function ValePage() {
       changeBackgroundColor("error");
       return;
     }
-
     try {
       //const id = crypto.randomUUID();
       const id = uuidv4();
@@ -110,6 +109,7 @@ export default function ValePage() {
             producto: item.producto,
             producto_descripcion: item.descripcion,
             cantidad: item.cantidad,
+            certificado: item.certificadoData.certificado,
           })
         );
       });
@@ -141,9 +141,10 @@ export default function ValePage() {
   useEffect(() => {
     if (producto.isValid && cantidad.isValid) {
       const item = {
-        producto: producto.value,
+        producto: producto.certificado.codigo,
         descripcion: producto.message,
         cantidad: cantidad.value,
+        certificadoData: producto.certificado,
       };
 
       setItems([...items, item]);
@@ -239,7 +240,7 @@ export default function ValePage() {
                       {items.map((item, index) => (
                         <Tr key={index}>
                           <Td>{item.cantidad}</Td>
-                          <Td>{item.producto}</Td>
+                          <Td>{item.certificadoData ? item.certificadoData.certificado : item.producto}</Td>
                           <Td>{item.descripcion}</Td>
                         </Tr>
                       ))}
