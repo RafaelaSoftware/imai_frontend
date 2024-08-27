@@ -109,7 +109,7 @@ export default function ValePage() {
             producto: item.producto,
             producto_descripcion: item.descripcion,
             cantidad: item.cantidad,
-            certificado: item.certificadoData.certificado,
+            certificado: item.certificado,
           })
         );
       });
@@ -141,10 +141,10 @@ export default function ValePage() {
   useEffect(() => {
     if (producto.isValid && cantidad.isValid) {
       const item = {
-        producto: producto.certificado.codigo,
+        producto: producto.detallesProducto.certificado ? null : producto.detallesProducto.codigo,
         descripcion: producto.message,
         cantidad: cantidad.value,
-        certificadoData: producto.certificado,
+        certificado: producto.detallesProducto.certificado,
       };
 
       setItems([...items, item]);
@@ -240,7 +240,7 @@ export default function ValePage() {
                       {items.map((item, index) => (
                         <Tr key={index}>
                           <Td>{item.cantidad}</Td>
-                          <Td>{item.certificadoData ? item.certificadoData.certificado : item.producto}</Td>
+                          <Td>{item.producto ? item.producto : item.certificado}</Td>
                           <Td>{item.descripcion}</Td>
                         </Tr>
                       ))}

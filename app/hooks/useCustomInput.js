@@ -15,7 +15,7 @@ const useCustomInput = (
   const [isValid, setValid] = useState(false);
   const [inicioTurno, setInicioTurno] = useState("");
   const [tareas, setTareas] = useState([]);
-  const [certificado, setCertificado] = useState(false);
+  const [detallesProducto, setDetallesProducto] = useState(null);
   const { showToast } = useCustomToast();
 
   useEffect(() => {
@@ -94,9 +94,9 @@ const useCustomInput = (
           }
 
           if (type === "producto") {
-            setCertificado(result);
+            setDetallesProducto(result);
           } else {
-            setCertificado(null);
+            setDetallesProducto(null);
           }
 
         } else {
@@ -121,7 +121,7 @@ const useCustomInput = (
     isValid,
     inicioTurno,
     tareas,
-    certificado,
+    detallesProducto,
   };
 };
 
