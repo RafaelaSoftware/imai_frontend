@@ -116,17 +116,44 @@ export default function ValePage() {
       showToast("Notificación", "Vale creado con éxito", "success");
       changeBackgroundColor("success");
 
-      inputRefEmpleado.current.focus();
-      empleado.resetValues();
-      ordenproduccion.resetValues();
-      producto.resetValues();
-      cantidad.resetValues();
+      resetValuesRefs();
 
       setItems([]);
     } catch (error) {
       console.log(error);
       showToast("Error", "No se pudo crear el vale", "error");
       changeBackgroundColor("error");
+    }
+  };
+
+  const resetValuesRefs = () => {
+    inputRefEmpleado.current.focus();
+    empleado.resetValues();
+    ordenproduccion.resetValues();
+    producto.resetValues();
+    cantidad.resetValues();
+  }
+
+  const handleConfirmacion = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (e.target.value === "SI") {
+        handleSubmit({
+          empleado: inputRefEmpleado.current.value,
+          ordenproduccion: inputRefOrdenProduccion.current.value,
+          producto: inputRefProducto.current.value,
+          cantidad: inputRefCantidad.current.value,
+        });
+      } else if (e.target.value === "NO") {
+        resetValuesRefs();
+        setItems([]);
+
+        showToast("Vale anulado", "Se anulo y reinicio el VALE", "info");
+      } else {
+        producto.handleKeyDown(e);
+      }
     }
   };
 
@@ -188,7 +215,7 @@ export default function ValePage() {
               type="text"
               placeholder="Producto"
               onChange={producto.handleChange}
-              onKeyDown={producto.handleKeyDown}
+              onKeyDown={handleConfirmacion}
               message={producto.message}
               inputRef={inputRefProducto}
             />
