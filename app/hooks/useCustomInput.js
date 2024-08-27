@@ -15,6 +15,7 @@ const useCustomInput = (
   const [isValid, setValid] = useState(false);
   const [inicioTurno, setInicioTurno] = useState("");
   const [tareas, setTareas] = useState([]);
+  const [detallesProducto, setDetallesProducto] = useState(null);
   const { showToast } = useCustomToast();
 
   useEffect(() => {
@@ -66,7 +67,7 @@ const useCustomInput = (
             if (result.tarea && result.tarea_descripcion) {
               targetRef.current.focus();
               targetRef.current.value = result.tarea;
-              setNextValue(result.tarea)
+              if (setNextValue) setNextValue(result.tarea);
                 // Creamos el evento para simular el keydown de la tecla Enter
                 const keyDownEvent = new KeyboardEvent('keydown', {
                   key: 'Enter',
@@ -80,7 +81,6 @@ const useCustomInput = (
                 }, 1000);
 
             } else {
-
               targetRef.current.focus();
             }
           }
@@ -92,6 +92,13 @@ const useCustomInput = (
             setInicioTurno("");
             setTareas([]);
           }
+
+          if (type === "producto") {
+            setDetallesProducto(result);
+          } else {
+            setDetallesProducto(null);
+          }
+
         } else {
           resetValues();
           showToast("Error", result.description, "error");
@@ -114,6 +121,7 @@ const useCustomInput = (
     isValid,
     inicioTurno,
     tareas,
+    detallesProducto,
   };
 };
 
