@@ -15,7 +15,7 @@ import { v4 as uuidv4 } from "uuid";
 import { changeBackgroundColor } from "@/app/libs/utils";
 
 export default function ValePage() {
-  const { directus, createItem, user, readItems } = useAuth();
+  const { directus, createItem, user, readItems, isOperario } = useAuth();
   const { showToast } = useCustomToast();
   const router = useRouter();
 
@@ -183,7 +183,7 @@ export default function ValePage() {
   return (
     <Box>
       <Center>
-        <Text fontSize="lg" fontWeight="bold">
+        <Text fontSize={isOperario ? "3xl" : "lg"} fontWeight="bold">
           VALE DE CONSUMO
         </Text>
       </Center>
@@ -249,7 +249,7 @@ export default function ValePage() {
 
         {items.length > 0 && (
           <Box>
-            <Text fontSize="lg" fontWeight="bold">
+            <Text fontWeight="bold" fontSize={isOperario ? "3xl" : "lg"}>
               Productos a consumir
             </Text>
             <Flex gap={4} direction="column" alignItems="left">
@@ -258,17 +258,17 @@ export default function ValePage() {
                   <Table variant="simple">
                     <Thead>
                       <Tr>
-                        <Th>Cantidad</Th>
-                        <Th>Código</Th>
-                        <Th>Descripción</Th>
+                        <Th fontSize={isOperario ? "lg" : "xs"}>Cantidad</Th>
+                        <Th fontSize={isOperario ? "lg" : "xs"}>Código</Th>
+                        <Th fontSize={isOperario ? "lg" : "xs"}>Descripción</Th>
                       </Tr>
                     </Thead>
                     <Tbody>
                       {items.map((item, index) => (
                         <Tr key={index}>
-                          <Td>{item.cantidad}</Td>
-                          <Td>{item.producto ? item.producto : item.certificado}</Td>
-                          <Td>{item.descripcion}</Td>
+                          <Td fontSize={isOperario ? "2xl" : "xs"}>{item.cantidad}</Td>
+                          <Td fontSize={isOperario ? "2xl" : "xs"}>{item.producto ? item.producto : item.certificado}</Td>
+                          <Td fontSize={isOperario ? "2xl" : "xs"}>{item.descripcion}</Td>
                         </Tr>
                       ))}
                     </Tbody>

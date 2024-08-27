@@ -1,3 +1,4 @@
+import { useAuth } from "@/app/libs/AuthProvider";
 import { Input, Text } from "@chakra-ui/react";
 
 export default function InputField({
@@ -9,6 +10,7 @@ export default function InputField({
   message,
   inputRef,
 }) {
+  const { isOperario } = useAuth();
   return (
     <>
       <Input
@@ -28,8 +30,9 @@ export default function InputField({
         _focus={{
           borderColor: "own",
         }}
+        fontSize={isOperario && "3xl"}
       />
-      <Text>{message}</Text>
+      <Text fontSize={isOperario && "3xl"}>{message}</Text>
     </>
   );
 }

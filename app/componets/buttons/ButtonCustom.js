@@ -1,10 +1,14 @@
+import { useAuth } from "@/app/libs/AuthProvider";
 import { Button } from "@chakra-ui/react";
 
 export default function ButtonCustom({ children, ...props }) {
+  const { isOperario } = useAuth();
+
   return (
     <Button
       variant="solid"
-      size="lg"
+      size={"lg"}
+      fontSize={isOperario && "3xl"}
       borderRadius="full"
       color="white"
       width="full"
