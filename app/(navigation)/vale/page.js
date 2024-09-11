@@ -189,29 +189,35 @@ export default function ValePage() {
       </Center>
 
       <Flex gap={2} direction="column" alignItems="left">
-        <InputField
-          id="empleado"
-          type="text"
-          placeholder="Empleado"
-          onChange={empleado.handleChange}
-          onKeyDown={empleado.handleKeyDown}
-          message={empleado.message}
-          inputRef={inputRefEmpleado}
-          height="156px"
-        />
-        <InputField
-          id="ordenproduccion"
-          type="text"
-          placeholder="Orden de Producción"
-          onChange={ordenproduccion.handleChange}
-          onKeyDown={ordenproduccion.handleKeyDown}
-          message={ordenproduccion.message}
-          inputRef={inputRefOrdenProduccion}
-          height="156px"
-        />
+        <Flex gap={4} direction="row" alignItems={"top"}>
+          <Box maxW={"50%"}>
+            <InputField
+              id="empleado"
+              type="text"
+              placeholder="Empleado"
+              onChange={empleado.handleChange}
+              onKeyDown={empleado.handleKeyDown}
+              message={empleado.message}
+              inputRef={inputRefEmpleado}
+              height="156px"
+            />
+          </Box>
+          <Box maxW={"50%"}>
+            <InputField
+              id="ordenproduccion"
+              type="text"
+              placeholder="OP"
+              onChange={ordenproduccion.handleChange}
+              onKeyDown={ordenproduccion.handleKeyDown}
+              message={ordenproduccion.message}
+              inputRef={inputRefOrdenProduccion}
+              height="156px"
+            />
+          </Box>
+        </Flex>
 
         <Flex gap={4} direction="row" alignItems={"top"}>
-          <Box flex={2}>
+          <Box flex={2} maxW={"820px"}>
             <InputField
               id="producto"
               type="text"
@@ -224,7 +230,7 @@ export default function ValePage() {
             />
           </Box>
 
-          <Box flex={1}>
+          <Box flex={1} maxW={"400px"}>
             <InputField
               id="cantidad"
               type="number"
