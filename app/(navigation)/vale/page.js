@@ -190,7 +190,7 @@ export default function ValePage() {
 
       <Flex gap={2} direction="column" alignItems="left">
         <Flex gap={4} direction="row" alignItems={"top"}>
-          <Box flex={2} maxW={"820px"}>
+          <Box maxW={"50%"}>
             <InputField
               id="empleado"
               type="text"
@@ -202,7 +202,7 @@ export default function ValePage() {
               height="156px"
             />
           </Box>
-          <Box flex={1} maxW={"400px"}>
+          <Box maxW={"50%"}>
             <InputField
               id="ordenproduccion"
               type="text"
