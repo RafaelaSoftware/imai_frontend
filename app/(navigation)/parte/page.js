@@ -190,7 +190,7 @@ export default function PartePage() {
         </Text>
       </Center>
 
-      <Flex gap={2} direction="column" alignItems="left">
+      <Flex gap={4} direction="column" alignItems="left">
         <InputField
           id="empleado"
           name="empleado"

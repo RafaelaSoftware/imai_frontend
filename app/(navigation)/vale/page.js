@@ -197,6 +197,7 @@ export default function ValePage() {
           onKeyDown={empleado.handleKeyDown}
           message={empleado.message}
           inputRef={inputRefEmpleado}
+          height="156px"
         />
         <InputField
           id="ordenproduccion"
@@ -206,6 +207,7 @@ export default function ValePage() {
           onKeyDown={ordenproduccion.handleKeyDown}
           message={ordenproduccion.message}
           inputRef={inputRefOrdenProduccion}
+          height="156px"
         />
 
         <Flex gap={4} direction="row" alignItems={"top"}>
@@ -218,6 +220,7 @@ export default function ValePage() {
               onKeyDown={handleConfirmacion}
               message={producto.message}
               inputRef={inputRefProducto}
+              height="156px"
             />
           </Box>
 
@@ -225,11 +228,12 @@ export default function ValePage() {
             <InputField
               id="cantidad"
               type="number"
-              placeholder="Cantidad"
+              placeholder="Cant"
               onChange={cantidad.handleChange}
               onKeyDown={cantidad.handleKeyDown}
               message={cantidad.message}
               inputRef={inputRefCantidad}
+              height="156px"
             />
           </Box>
         </Flex>

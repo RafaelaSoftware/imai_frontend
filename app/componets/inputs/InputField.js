@@ -9,10 +9,11 @@ export default function InputField({
   onKeyDown,
   message,
   inputRef,
+  height = "auto"
 }) {
   const { isOperario } = useAuth();
   return (
-    <>
+    <Box height={height}>
       <Input
         id={id}
         name={id}
@@ -36,6 +37,6 @@ export default function InputField({
 
       <Text fontSize={isOperario && "5xl"} maxWidth={"1000px"} whiteSpace={"nowrap"} overflow="hidden" textOverflow={"ellipsis"}>{message}</Text>
 
-    </>
+    </Box>
   );
 }
