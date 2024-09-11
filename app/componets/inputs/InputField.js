@@ -35,7 +35,7 @@ export default function InputField({
         padding={isOperario && 10}
       />
 
-      <Text fontSize={isOperario && "5xl"} maxWidth={"1000px"} whiteSpace={"nowrap"} overflow="hidden" textOverflow={"ellipsis"}>{message}</Text>
+      <Text fontSize={isOperario && "3xl"} maxWidth="100%" whiteSpace={"nowrap"} overflow="hidden" textOverflow={"ellipsis"}>{message}</Text>
 
     </Box>
   );
