@@ -8,7 +8,8 @@ export default function ButtonCustom({ children, ...props }) {
     <Button
       variant="solid"
       size={"lg"}
-      fontSize={isOperario && "3xl"}
+      fontSize={isOperario && "5xl"}
+      padding={isOperario && 10}
       borderRadius="full"
       color="white"
       width="full"

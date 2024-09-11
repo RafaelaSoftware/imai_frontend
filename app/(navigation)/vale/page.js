@@ -183,12 +183,12 @@ export default function ValePage() {
   return (
     <Box>
       <Center>
-        <Text fontSize={isOperario ? "3xl" : "lg"} fontWeight="bold">
+        <Text fontSize={isOperario ? "5xl" : "lg"} fontWeight="bold">
           VALE DE CONSUMO
         </Text>
       </Center>
 
-      <Flex gap={4} direction="column" alignItems="left">
+      <Flex gap={2} direction="column" alignItems="left">
         <InputField
           id="empleado"
           type="text"
@@ -243,6 +243,7 @@ export default function ValePage() {
               cantidad: inputRefCantidad.current.value,
             });
           }}
+          mt={2}
         >
           Confirmar
         </ButtonCustom>

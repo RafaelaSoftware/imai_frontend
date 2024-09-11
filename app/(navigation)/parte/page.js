@@ -185,12 +185,12 @@ export default function PartePage() {
   return (
     <Box>
       <Center>
-        <Text fontSize={isOperario ? "3xl" : "lg"} fontWeight="bold">
+        <Text fontSize={isOperario ? "5xl" : "lg"} fontWeight="bold">
           PARTE DE PRODUCCION
         </Text>
       </Center>
 
-      <Flex gap={4} direction="column" alignItems="left">
+      <Flex gap={2} direction="column" alignItems="left">
         <InputField
           id="empleado"
           name="empleado"
@@ -241,6 +241,7 @@ export default function PartePage() {
               confirmacion: confirmacion.value,
             });
           }}
+          mt={2}
         >
           Confirmar
         </ButtonCustom>

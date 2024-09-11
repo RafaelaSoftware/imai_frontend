@@ -136,12 +136,12 @@ export default function FichadaPage() {
   return (
     <Box>
       <Center>
-        <Text fontSize={isOperario ? "3xl" : "lg"} fontWeight="bold">
+        <Text fontSize={isOperario ? "5xl" : "lg"} fontWeight="bold">
           FICHADA
         </Text>
       </Center>
 
-      <Flex gap={4} direction="column" alignItems="left">
+      <Flex gap={2} direction="column" alignItems="left">
         <InputField
           fontSize={isOperario && "3xl"}
           id="empleado"
@@ -160,6 +160,7 @@ export default function FichadaPage() {
               empleado: empleado.value,
             });
           }}
+          mt={2}
         >
           Confirmar
         </ButtonCustom>
