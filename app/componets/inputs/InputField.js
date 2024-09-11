@@ -1,4 +1,5 @@
-import { Input, Text } from "@chakra-ui/react";
+import { useAuth } from "@/app/libs/AuthProvider";
+import { Box, Input, Text } from "@chakra-ui/react";
 
 export default function InputField({
   id,
@@ -8,9 +9,11 @@ export default function InputField({
   onKeyDown,
   message,
   inputRef,
+  height = "auto"
 }) {
+  const { isOperario } = useAuth();
   return (
-    <>
+    <Box height={height}>
       <Input
         id={id}
         name={id}
@@ -20,7 +23,7 @@ export default function InputField({
         onKeyDown={onKeyDown}
         ref={inputRef}
         variant="filled"
-        borderRadius="30"
+        borderRadius="full"
         size="lg"
         bgColor="white"
         color="#C0C0C0"
@@ -28,8 +31,12 @@ export default function InputField({
         _focus={{
           borderColor: "own",
         }}
+        fontSize={isOperario && "5xl"}
+        padding={isOperario && 10}
       />
-      <Text>{message}</Text>
-    </>
+
+      <Text fontSize={isOperario && "5xl"} maxWidth={"1000px"} whiteSpace={"nowrap"} overflow="hidden" textOverflow={"ellipsis"}>{message}</Text>
+
+    </Box>
   );
 }

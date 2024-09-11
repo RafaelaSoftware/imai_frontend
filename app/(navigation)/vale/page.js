@@ -15,7 +15,7 @@ import { v4 as uuidv4 } from "uuid";
 import { changeBackgroundColor } from "@/app/libs/utils";
 
 export default function ValePage() {
-  const { directus, createItem, user, readItems } = useAuth();
+  const { directus, createItem, user, readItems, isOperario } = useAuth();
   const { showToast } = useCustomToast();
   const router = useRouter();
 
@@ -183,12 +183,12 @@ export default function ValePage() {
   return (
     <Box>
       <Center>
-        <Text fontSize="lg" fontWeight="bold">
+        <Text fontSize={isOperario ? "5xl" : "lg"} fontWeight="bold">
           VALE DE CONSUMO
         </Text>
       </Center>
 
-      <Flex gap={4} direction="column" alignItems="left">
+      <Flex gap={2} direction="column" alignItems="left">
         <InputField
           id="empleado"
           type="text"
@@ -197,6 +197,7 @@ export default function ValePage() {
           onKeyDown={empleado.handleKeyDown}
           message={empleado.message}
           inputRef={inputRefEmpleado}
+          height="156px"
         />
         <InputField
           id="ordenproduccion"
@@ -206,6 +207,7 @@ export default function ValePage() {
           onKeyDown={ordenproduccion.handleKeyDown}
           message={ordenproduccion.message}
           inputRef={inputRefOrdenProduccion}
+          height="156px"
         />
 
         <Flex gap={4} direction="row" alignItems={"top"}>
@@ -218,6 +220,7 @@ export default function ValePage() {
               onKeyDown={handleConfirmacion}
               message={producto.message}
               inputRef={inputRefProducto}
+              height="156px"
             />
           </Box>
 
@@ -225,11 +228,12 @@ export default function ValePage() {
             <InputField
               id="cantidad"
               type="number"
-              placeholder="Cantidad"
+              placeholder="Cant"
               onChange={cantidad.handleChange}
               onKeyDown={cantidad.handleKeyDown}
               message={cantidad.message}
               inputRef={inputRefCantidad}
+              height="156px"
             />
           </Box>
         </Flex>
@@ -243,13 +247,14 @@ export default function ValePage() {
               cantidad: inputRefCantidad.current.value,
             });
           }}
+          mt={2}
         >
           Confirmar
         </ButtonCustom>
 
         {items.length > 0 && (
           <Box>
-            <Text fontSize="lg" fontWeight="bold">
+            <Text fontWeight="bold" fontSize={isOperario ? "3xl" : "lg"}>
               Productos a consumir
             </Text>
             <Flex gap={4} direction="column" alignItems="left">
@@ -258,17 +263,17 @@ export default function ValePage() {
                   <Table variant="simple">
                     <Thead>
                       <Tr>
-                        <Th>Cantidad</Th>
-                        <Th>Código</Th>
-                        <Th>Descripción</Th>
+                        <Th fontSize={isOperario ? "lg" : "xs"}>Cantidad</Th>
+                        <Th fontSize={isOperario ? "lg" : "xs"}>Código</Th>
+                        <Th fontSize={isOperario ? "lg" : "xs"}>Descripción</Th>
                       </Tr>
                     </Thead>
                     <Tbody>
                       {items.map((item, index) => (
                         <Tr key={index}>
-                          <Td>{item.cantidad}</Td>
-                          <Td>{item.producto ? item.producto : item.certificado}</Td>
-                          <Td>{item.descripcion}</Td>
+                          <Td fontSize={isOperario ? "2xl" : "xs"}>{item.cantidad}</Td>
+                          <Td fontSize={isOperario ? "2xl" : "xs"}>{item.producto ? item.producto : item.certificado}</Td>
+                          <Td fontSize={isOperario ? "2xl" : "xs"}>{item.descripcion}</Td>
                         </Tr>
                       ))}
                     </Tbody>

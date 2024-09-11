@@ -13,7 +13,7 @@ import { changeBackgroundColor } from "@/app/libs/utils";
 import moment from 'moment-timezone';
 
 export default function FichadaPage() {
-  const { directus, createItem, readItems, updateItem, user } = useAuth();
+  const { directus, createItem, readItems, updateItem, user, isOperario } = useAuth();
   const { showToast } = useCustomToast();
   const router = useRouter();
 
@@ -136,13 +136,14 @@ export default function FichadaPage() {
   return (
     <Box>
       <Center>
-        <Text fontSize="lg" fontWeight="bold">
+        <Text fontSize={isOperario ? "5xl" : "lg"} fontWeight="bold">
           FICHADA
         </Text>
       </Center>
 
-      <Flex gap={4} direction="column" alignItems="left">
+      <Flex gap={2} direction="column" alignItems="left">
         <InputField
+          fontSize={isOperario && "3xl"}
           id="empleado"
           name="empleado"
           type="text"
@@ -159,6 +160,7 @@ export default function FichadaPage() {
               empleado: empleado.value,
             });
           }}
+          mt={2}
         >
           Confirmar
         </ButtonCustom>

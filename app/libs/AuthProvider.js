@@ -60,6 +60,7 @@ export const AuthProvider = ({ children }) => {
     createItem,
     readItems,
     updateItem,
+    isOperario: user?.role.name === "Operarios", 
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
