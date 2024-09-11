@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 import { changeBackgroundColor } from "@/app/libs/utils";
 
 export default function PartePage() {
-  const { directus, createItem, readItems, user, updateItem } = useAuth();
+  const { directus, createItem, readItems, user, updateItem, isOperario } = useAuth();
   const { showToast } = useCustomToast();
   const router = useRouter();
   const inputRefEmpleado = useRef(null);
@@ -185,7 +185,7 @@ export default function PartePage() {
   return (
     <Box>
       <Center>
-        <Text fontSize="lg" fontWeight="bold">
+        <Text fontSize={isOperario ? "5xl" : "lg"} fontWeight="bold">
           PARTE DE PRODUCCION
         </Text>
       </Center>
@@ -241,6 +241,7 @@ export default function PartePage() {
               confirmacion: confirmacion.value,
             });
           }}
+          mt={2}
         >
           Confirmar
         </ButtonCustom>

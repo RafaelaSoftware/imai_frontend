@@ -45,6 +45,15 @@ const isValidData = async (table, data) => {
         };
       }
     } else {
+      if (table === "producto") {
+        return {
+          isValid: true,
+          codigo: response[0].codigo,
+          description: response[0].descripcion,
+          certificado: response[0].certificado,
+          tiene_certificado: response[0].tiene_certificado,
+        };
+      }
       return {
         isValid: true,
         description: response[0].descripcion,

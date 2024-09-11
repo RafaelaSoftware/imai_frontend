@@ -8,13 +8,14 @@ const useCustomInput = (
   inputRef,
   targetRef,
   showMessage,
-  setNextValue
+  setNextValue,
 ) => {
   const [value, setValue] = useState(initialValue);
   const [message, setMessage] = useState("");
   const [isValid, setValid] = useState(false);
   const [inicioTurno, setInicioTurno] = useState("");
   const [tareas, setTareas] = useState([]);
+  const [detallesProducto, setDetallesProducto] = useState(null);
   const { showToast } = useCustomToast();
 
   useEffect(() => {
@@ -62,25 +63,30 @@ const useCustomInput = (
           if (showMessage) {
             setMessage(result.description);
           }
+
           if (targetRef) {
             if (result.tarea && result.tarea_descripcion) {
+              //Si en PARTE, se selecciona una Orden Produccion, se autocompleta el siguiente campo del formulario (tarea) con el valor del resulado de la API.
+
               targetRef.current.focus();
               targetRef.current.value = result.tarea;
-              setNextValue(result.tarea)
-                // Creamos el evento para simular el keydown de la tecla Enter
-                const keyDownEvent = new KeyboardEvent('keydown', {
-                  key: 'Enter',
-                  code: 'Enter',
-                  keyCode: 13,
-                  which: 13,
-                  bubbles: true,
-                });
-                setTimeout(() => {
-                  targetRef.current.dispatchEvent(keyDownEvent);
-                }, 1000);
+
+              if (setNextValue) setNextValue(result.tarea);
+
+
+              const keyDownEvent = new KeyboardEvent('keydown', {
+                key: 'Enter',
+                code: 'Enter',
+                keyCode: 13,
+                which: 13,
+                bubbles: true,
+              });
+
+              const seconds = 1000;
+              setTimeout(() => targetRef.current.dispatchEvent(keyDownEvent), seconds);
 
             } else {
-
+              // Si en PARTE, no tiene la repuesta de la API con la tarea y la tarea_descripcion, se sigue el flujo normal.
               targetRef.current.focus();
             }
           }
@@ -92,6 +98,13 @@ const useCustomInput = (
             setInicioTurno("");
             setTareas([]);
           }
+
+          if (type === "producto") {
+            setDetallesProducto(result);
+          } else {
+            setDetallesProducto(null);
+          }
+
         } else {
           resetValues();
           showToast("Error", result.description, "error");
@@ -114,6 +127,7 @@ const useCustomInput = (
     isValid,
     inicioTurno,
     tareas,
+    detallesProducto,
   };
 };
 
