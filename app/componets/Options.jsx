@@ -2,13 +2,41 @@
 import { Box } from "@chakra-ui/react";
 import ButtonCustom from "./buttons/ButtonCustom";
 import { useAuth } from "@/app/libs/AuthProvider";
+import { useEffect } from "react";
 
 export default function Options({ router }) {
   const { user } = useAuth();
 
+  const roots = {
+    vale: "vale",
+    parte: "parte",
+    fichada: "fichada",
+  };
+
   const handleOption = (option) => {
     router.push(`/${option}`);
   };
+
+  useEffect(() => {
+    const allowedFunctions = [];
+    const {
+      permite_crear_fichada,
+      permite_crear_parte,
+      permite_crear_parte_sin_turno,
+      permite_crear_vale,
+      permite_crear_vale_sin_fichada,
+    } = user.role;
+
+    if (permite_crear_fichada) allowedFunctions.push(roots.fichada);
+    if (permite_crear_parte || permite_crear_parte_sin_turno)
+      allowedFunctions.push(roots.parte);
+    if (permite_crear_vale || permite_crear_vale_sin_fichada)
+      allowedFunctions.push(roots.vale);
+
+    if (allowedFunctions.length === 1) {
+      router.push(`/${allowedFunctions[0]}`);
+    }
+  }, []);
 
   return (
     <Box
@@ -22,7 +50,7 @@ export default function Options({ router }) {
       {user.role.permite_crear_fichada && (
         <ButtonCustom
           onClick={() => {
-            handleOption("fichada");
+            handleOption(roots.fichada);
           }}
         >
           FICHADA INGRESO / EGRESO
@@ -31,7 +59,7 @@ export default function Options({ router }) {
       {user.role.permite_crear_parte && (
         <ButtonCustom
           onClick={() => {
-            handleOption("parte");
+            handleOption(roots.parte);
           }}
         >
           PARTE DE PRODUCCION
@@ -40,7 +68,7 @@ export default function Options({ router }) {
       {user.role.permite_crear_vale && (
         <ButtonCustom
           onClick={() => {
-            handleOption("vale");
+            handleOption(roots.vale);
           }}
         >
           VALE DE SALIDA
