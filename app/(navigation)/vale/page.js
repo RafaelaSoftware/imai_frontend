@@ -13,6 +13,7 @@ import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
 
 import { v4 as uuidv4 } from "uuid";
 import { changeBackgroundColor } from "@/app/libs/utils";
+import moment from "moment";
 
 export default function ValePage() {
   const { directus, createItem, user, readItems, isOperario } = useAuth();
@@ -172,6 +173,7 @@ export default function ValePage() {
         descripcion: producto.message,
         cantidad: cantidad.value,
         certificado: producto.detallesProducto.certificado,
+        fecha: moment().format("YYYY-MM-DD HH:mm:ss"),
       };
 
       setItems([...items, item]);
@@ -182,12 +184,6 @@ export default function ValePage() {
 
   return (
     <Box>
-      <Center>
-        <Text fontSize={isOperario ? "5xl" : "lg"} fontWeight="bold">
-          VALE DE CONSUMO
-        </Text>
-      </Center>
-
       <Flex gap={2} direction="column" alignItems="left">
         <Flex gap={4} direction="row" alignItems={"top"}>
           <Box maxW={"50%"}>
@@ -254,6 +250,11 @@ export default function ValePage() {
             });
           }}
           mt={2}
+          visibility={"hidden"}
+          position={"absolute"}
+          top={"0"}
+          length={"0"}
+          zIndex={"-100"}
         >
           Confirmar
         </ButtonCustom>
@@ -269,17 +270,17 @@ export default function ValePage() {
                   <Table variant="simple">
                     <Thead>
                       <Tr>
-                        <Th fontSize={isOperario ? "lg" : "xs"}>Cantidad</Th>
-                        <Th fontSize={isOperario ? "lg" : "xs"}>Código</Th>
-                        <Th fontSize={isOperario ? "lg" : "xs"}>Descripción</Th>
+                        <Th fontSize={isOperario ? "3xl" : "xs"}>Cantidad</Th>
+                        <Th fontSize={isOperario ? "3xl" : "xs"}>Código</Th>
+                        <Th fontSize={isOperario ? "3xl" : "xs"}>Descripción</Th>
                       </Tr>
                     </Thead>
                     <Tbody>
-                      {items.map((item, index) => (
+                      {items.sort((a, b) => moment(b.fecha).diff(moment(a.fecha))).map((item, index) => (
                         <Tr key={index}>
-                          <Td fontSize={isOperario ? "2xl" : "xs"}>{item.cantidad}</Td>
-                          <Td fontSize={isOperario ? "2xl" : "xs"}>{item.producto ? item.producto : item.certificado}</Td>
-                          <Td fontSize={isOperario ? "2xl" : "xs"}>{item.descripcion}</Td>
+                          <Td fontSize={isOperario ? "3xl" : "xs"}>{item.cantidad}</Td>
+                          <Td fontSize={isOperario ? "3xl" : "xs"}>{item.producto ? item.producto : item.certificado}</Td>
+                          <Td fontSize={isOperario ? "3xl" : "xs"}>{item.descripcion}</Td>
                         </Tr>
                       ))}
                     </Tbody>
