@@ -195,7 +195,7 @@ export default function ValePage() {
               onKeyDown={empleado.handleKeyDown}
               message={empleado.message}
               inputRef={inputRefEmpleado}
-              height="156px"
+              height="130px"
             />
           </Box>
           <Box maxW={"50%"}>
@@ -207,7 +207,7 @@ export default function ValePage() {
               onKeyDown={ordenproduccion.handleKeyDown}
               message={ordenproduccion.message}
               inputRef={inputRefOrdenProduccion}
-              height="156px"
+              height="130px"
             />
           </Box>
         </Flex>
@@ -222,7 +222,7 @@ export default function ValePage() {
               onKeyDown={handleConfirmacion}
               message={producto.message}
               inputRef={inputRefProducto}
-              height="156px"
+              height="130px"
             />
           </Box>
 
@@ -235,7 +235,7 @@ export default function ValePage() {
               onKeyDown={cantidad.handleKeyDown}
               message={cantidad.message}
               inputRef={inputRefCantidad}
-              height="156px"
+              height="130px"
             />
           </Box>
         </Flex>
@@ -261,9 +261,6 @@ export default function ValePage() {
 
         {items.length > 0 && (
           <Box>
-            <Text fontWeight="bold" fontSize={isOperario ? "3xl" : "lg"}>
-              Productos a consumir
-            </Text>
             <Flex gap={4} direction="column" alignItems="left">
               {items.length > 0 && (
                 <Box>
@@ -271,7 +268,7 @@ export default function ValePage() {
                     <Thead>
                       <Tr>
                         <Th fontSize={isOperario ? "3xl" : "xs"}>Cantidad</Th>
-                        <Th fontSize={isOperario ? "3xl" : "xs"}>Código</Th>
+                        <Th fontSize={isOperario ? "3xl" : "xs"} whiteSpace={"nowrap"}>Productos a consumir</Th>
                         <Th fontSize={isOperario ? "3xl" : "xs"}>Descripción</Th>
                       </Tr>
                     </Thead>
@@ -280,7 +277,7 @@ export default function ValePage() {
                         <Tr key={index}>
                           <Td fontSize={isOperario ? "3xl" : "xs"}>{item.cantidad}</Td>
                           <Td fontSize={isOperario ? "3xl" : "xs"}>{item.producto ? item.producto : item.certificado}</Td>
-                          <Td fontSize={isOperario ? "3xl" : "xs"}>{item.descripcion}</Td>
+                          <Td fontSize={isOperario ? "3xl" : "xs"} lineHeight={"30px"}>{item.descripcion}</Td>
                         </Tr>
                       ))}
                     </Tbody>
