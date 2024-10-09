@@ -1,7 +1,7 @@
 // Assuming you have a user object with properties 'name' and 'lastName'
 "use client";
 
-import { Text, Box, Center, Spacer, Flex } from "@chakra-ui/react";
+import { Text, Box, Center, Spacer, Flex, useDisclosure } from "@chakra-ui/react";
 import ButtonCustom from "@/app/componets/buttons/ButtonCustom";
 import { useAuth } from "@/app/libs/AuthProvider";
 import { useRef, useEffect, useState, use } from "react";
@@ -14,6 +14,7 @@ import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
 import { v4 as uuidv4 } from "uuid";
 import { changeBackgroundColor } from "@/app/libs/utils";
 import moment from "moment";
+import { ListaProductos } from "@/app/componets/vale/ListaProductos";
 
 export default function ValePage() {
   const { directus, createItem, user, readItems, isOperario } = useAuth();
@@ -26,6 +27,8 @@ export default function ValePage() {
   const inputRefCantidad = useRef(null);
 
   const [items, setItems] = useState([]);
+
+  const { isOpen: isOpenListaProductos, onOpen: onOpenListaProductos, onClose: onCloseListaProductos } = useDisclosure();
 
   const empleado = useCustomInput(
     "",
@@ -45,18 +48,20 @@ export default function ValePage() {
     "",
     "producto",
     inputRefProducto,
-    inputRefCantidad,
+    inputRefProducto,
     true
   );
-  const cantidad = useCustomInput(
-    "",
-    "cantidad",
-    inputRefCantidad,
-    inputRefProducto,
-    false
-  );
+  // const cantidad = useCustomInput(
+  //   "",
+  //   "cantidad",
+  //   inputRefCantidad,
+  //   inputRefProducto,
+  //   false
+  // );
 
   const handleSubmit = async (values) => {
+
+    console.log(items);
     if (values.empleado === "" || values.ordenproduccion === "") {
       showToast("Error", "Todos los campos son obligatorios", "error");
       changeBackgroundColor("error");
@@ -132,7 +137,7 @@ export default function ValePage() {
     empleado.resetValues();
     ordenproduccion.resetValues();
     producto.resetValues();
-    cantidad.resetValues();
+    // cantidad.resetValues();
   }
 
   const handleConfirmacion = (e) => {
@@ -141,12 +146,13 @@ export default function ValePage() {
       e.stopPropagation();
 
       if (e.target.value === "SI") {
-        handleSubmit({
-          empleado: inputRefEmpleado.current.value,
-          ordenproduccion: inputRefOrdenProduccion.current.value,
-          producto: inputRefProducto.current.value,
-          cantidad: inputRefCantidad.current.value,
-        });
+        onOpenListaProductos();
+        // handleSubmit({ //TODO: cambiar este a Modal listaProductos
+        //   empleado: inputRefEmpleado.current.value,
+        //   ordenproduccion: inputRefOrdenProduccion.current.value,
+        //   producto: inputRefProducto.current.value,
+        //   cantidad: inputRefCantidad.current.value,
+        // });
       } else if (e.target.value === "NO") {
         resetValuesRefs();
         setItems([]);
@@ -167,20 +173,21 @@ export default function ValePage() {
   }, []);
 
   useEffect(() => {
-    if (producto.isValid && cantidad.isValid) {
+    if (producto.isValid) {
+      const cantidadPrecargada = "1"; //Cada vez que ingrese un producto, la cantidad se precarga (setea) en 1.
+
       const item = {
         producto: producto.detallesProducto.certificado ? null : producto.detallesProducto.codigo,
         descripcion: producto.message,
-        cantidad: cantidad.value,
+        cantidad: cantidadPrecargada,
         certificado: producto.detallesProducto.certificado,
         fecha: moment().format("YYYY-MM-DD HH:mm:ss"),
       };
 
       setItems([...items, item]);
       producto.resetValues();
-      cantidad.resetValues();
     }
-  }, [cantidad.isValid]);
+  }, [producto.isValid]);
 
   return (
     <Box>
@@ -226,7 +233,7 @@ export default function ValePage() {
             />
           </Box>
 
-          <Box flex={1} maxW={"400px"}>
+          {/* <Box flex={1} maxW={"400px"}> //TODO: borrar este comentario
             <InputField
               id="cantidad"
               type="number"
@@ -237,7 +244,7 @@ export default function ValePage() {
               inputRef={inputRefCantidad}
               height="130px"
             />
-          </Box>
+          </Box> */}
         </Flex>
 
         <ButtonCustom
@@ -246,7 +253,7 @@ export default function ValePage() {
               empleado: inputRefEmpleado.current.value,
               ordenproduccion: inputRefOrdenProduccion.current.value,
               producto: inputRefProducto.current.value,
-              cantidad: inputRefCantidad.current.value,
+              // cantidad: inputRefCantidad.current.value,
             });
           }}
           mt={2}
@@ -258,6 +265,15 @@ export default function ValePage() {
         >
           Confirmar
         </ButtonCustom>
+
+        <ListaProductos
+          isOpen={isOpenListaProductos}
+          onClose={onCloseListaProductos}
+          onSubmit={handleSubmit}
+          productos={items}
+          empleado={inputRefEmpleado?.current?.value}
+          ordenproduccion={inputRefOrdenProduccion?.current?.value}
+        />
 
         {items.length > 0 && (
           <Box>
