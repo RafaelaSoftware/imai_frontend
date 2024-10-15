@@ -51,17 +51,8 @@ export default function ValePage() {
     inputRefProducto,
     true
   );
-  // const cantidad = useCustomInput(
-  //   "",
-  //   "cantidad",
-  //   inputRefCantidad,
-  //   inputRefProducto,
-  //   false
-  // );
 
   const handleSubmit = async (values) => {
-
-    console.log(items);
     if (values.empleado === "" || values.ordenproduccion === "") {
       showToast("Error", "Todos los campos son obligatorios", "error");
       changeBackgroundColor("error");
@@ -114,7 +105,7 @@ export default function ValePage() {
             ordenProduccion_descripcion: ordenproduccion.message,
             producto: item.producto,
             producto_descripcion: item.descripcion,
-            cantidad: item.cantidad,
+            cantidad: String(item.cantidad),
             certificado: item.certificado,
           })
         );
@@ -140,6 +131,12 @@ export default function ValePage() {
     // cantidad.resetValues();
   }
 
+  const handleCloseListaProductos = () => {
+    onCloseListaProductos();
+    producto.resetValues();
+    inputRefProducto.current.focus();
+  };
+
   const handleConfirmacion = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -147,12 +144,6 @@ export default function ValePage() {
 
       if (e.target.value === "SI") {
         onOpenListaProductos();
-        // handleSubmit({ //TODO: cambiar este a Modal listaProductos
-        //   empleado: inputRefEmpleado.current.value,
-        //   ordenproduccion: inputRefOrdenProduccion.current.value,
-        //   producto: inputRefProducto.current.value,
-        //   cantidad: inputRefCantidad.current.value,
-        // });
       } else if (e.target.value === "NO") {
         resetValuesRefs();
         setItems([]);
@@ -174,7 +165,7 @@ export default function ValePage() {
 
   useEffect(() => {
     if (producto.isValid) {
-      const cantidadPrecargada = "1"; //Cada vez que ingrese un producto, la cantidad se precarga (setea) en 1.
+      const cantidadPrecargada = 1; //Cada vez que ingrese un producto, la cantidad se precarga (setea) en 1.
 
       const item = {
         producto: producto.detallesProducto.certificado ? null : producto.detallesProducto.codigo,
@@ -232,19 +223,6 @@ export default function ValePage() {
               height="130px"
             />
           </Box>
-
-          {/* <Box flex={1} maxW={"400px"}> //TODO: borrar este comentario
-            <InputField
-              id="cantidad"
-              type="number"
-              placeholder="Cant"
-              onChange={cantidad.handleChange}
-              onKeyDown={cantidad.handleKeyDown}
-              message={cantidad.message}
-              inputRef={inputRefCantidad}
-              height="130px"
-            />
-          </Box> */}
         </Flex>
 
         <ButtonCustom
@@ -268,7 +246,7 @@ export default function ValePage() {
 
         <ListaProductos
           isOpen={isOpenListaProductos}
-          onClose={onCloseListaProductos}
+          onClose={handleCloseListaProductos}
           onSubmit={handleSubmit}
           productos={items}
           empleado={inputRefEmpleado?.current?.value}

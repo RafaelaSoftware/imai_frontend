@@ -20,13 +20,12 @@ const useCustomInput = (
 
   useEffect(() => {
     setValue(initialValue);
-    if (
-      inputRef?.current?.value
-    ) {
-
-      inputRef.current.value = initialValue; //TODO: NO ACTUALIZA INPUT
-    }
+    inputRef.current.value = initialValue;
   }, [initialValue]);
+
+  useEffect(() => {
+    inputRef.current.value = value;
+  }, [value, inputRef.current]);
 
   const handleChange = (e) => {
     setValue(e.target.value);

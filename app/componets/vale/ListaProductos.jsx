@@ -56,15 +56,9 @@ const ItemProducto = ({
       if (canMoveToNextInput) {
         cantidad.handleKeyDown(e);
       } else if (isLastInput) {
-        item.cantidad = cantidad.value;
-
-        onSubmit({
-          empleado,
-          ordenproduccion,
-          producto: item.certificado ? item.certificado : item.producto,
-          catidad: cantidad.value,
-        });
+        onSubmit();
       }
+      item.cantidad = cantidad.value;
     }
   };
 
@@ -108,6 +102,19 @@ export const ListaProductos = ({
 
   const inputs = productos.map(() => createRef());
 
+  const handleSubmit = () => {
+    const result = list.map((item) => {
+      return {
+        empleado,
+        ordenproduccion,
+        producto: item.certificado ? item.certificado : item.producto,
+        cantidad: item.cantidad,
+      };
+    });
+    onSubmit(result);
+    onClose();
+  };
+
   useEffect(() => {
     if (isOpen) {
       const products = productos.sort((a, b) =>
@@ -124,6 +131,7 @@ export const ListaProductos = ({
       size={"6xl"}
       scrollBehavior={"inside"}
       closeOnOverlayClick={false}
+      closeOnEsc={false}
     >
       <ModalOverlay />
       <ModalContent>
@@ -152,9 +160,10 @@ export const ListaProductos = ({
                       item={item}
                       index={index}
                       inputs={inputs}
-                      onSubmit={onSubmit}
+                      onSubmit={handleSubmit}
                       empleado={empleado}
                       ordenproduccion={ordenproduccion}
+                      setList={setList}
                     />
                   ))}
                 </Tbody>
@@ -167,7 +176,9 @@ export const ListaProductos = ({
           <Button mr={3} onClick={onClose}>
             Cerrar
           </Button>
-          <ButtonCustom maxWidth={"max-content"}>Guardar</ButtonCustom>
+          <ButtonCustom maxWidth={"max-content"} onClick={() => handleSubmit()}>
+            Guardar
+          </ButtonCustom>
         </ModalFooter>
       </ModalContent>
     </Modal>
