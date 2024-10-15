@@ -53,11 +53,18 @@ export default function ValePage() {
   );
 
   const handleSubmit = async (values) => {
+
+
+
     if (values.empleado === "" || values.ordenproduccion === "") {
       showToast("Error", "Todos los campos son obligatorios", "error");
       changeBackgroundColor("error");
       return;
     }
+
+    values.empleado = inputRefEmpleado.current.value;
+    values.ordenproduccion = inputRefOrdenProduccion.current.value;
+
     if (!empleado.isValid || !ordenproduccion.isValid) {
       showToast("Error", "Hay campos con errores de validación", "error");
       changeBackgroundColor("error");
@@ -96,6 +103,17 @@ export default function ValePage() {
       const id = uuidv4();
 
       items.forEach(async (item) => {
+        console.log({
+          transaccion: id,
+          empleado: values.empleado,
+          empleado_descripcion: empleado.message,
+          ordenProduccion: values.ordenproduccion,
+          ordenProduccion_descripcion: ordenproduccion.message,
+          producto: item.producto,
+          producto_descripcion: item.descripcion,
+          cantidad: String(item.cantidad),
+          certificado: item.certificado,
+        });
         const result = await directus.request(
           createItem("vale", {
             transaccion: id,
@@ -225,7 +243,7 @@ export default function ValePage() {
           </Box>
         </Flex>
 
-        <ButtonCustom
+        {/* <ButtonCustom
           onClick={() => {
             handleSubmit({
               empleado: inputRefEmpleado.current.value,
@@ -242,7 +260,7 @@ export default function ValePage() {
           zIndex={"-100"}
         >
           Confirmar
-        </ButtonCustom>
+        </ButtonCustom> */}
 
         <ListaProductos
           isOpen={isOpenListaProductos}

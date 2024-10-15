@@ -102,7 +102,7 @@ export const ListaProductos = ({
 
   const inputs = productos.map(() => createRef());
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const result = list.map((item) => {
       return {
         empleado,
@@ -111,7 +111,8 @@ export const ListaProductos = ({
         cantidad: item.cantidad,
       };
     });
-    onSubmit(result);
+    console.log(result);
+    await onSubmit(result);
     onClose();
   };
 
