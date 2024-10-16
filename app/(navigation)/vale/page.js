@@ -103,17 +103,6 @@ export default function ValePage() {
       const id = uuidv4();
 
       items.forEach(async (item) => {
-        console.log({
-          transaccion: id,
-          empleado: values.empleado,
-          empleado_descripcion: empleado.message,
-          ordenProduccion: values.ordenproduccion,
-          ordenProduccion_descripcion: ordenproduccion.message,
-          producto: item.producto,
-          producto_descripcion: item.descripcion,
-          cantidad: String(item.cantidad),
-          certificado: item.certificado,
-        });
         const result = await directus.request(
           createItem("vale", {
             transaccion: id,
@@ -146,7 +135,6 @@ export default function ValePage() {
     empleado.resetValues();
     ordenproduccion.resetValues();
     producto.resetValues();
-    // cantidad.resetValues();
   }
 
   const handleCloseListaProductos = () => {
@@ -169,6 +157,8 @@ export default function ValePage() {
         showToast("Vale anulado", "Se anulo y reinicio el VALE", "info");
       } else {
         producto.handleKeyDown(e);
+
+        showToast("Notificación", "Se agrego un producto al VALE", "info");
       }
     }
   };
@@ -229,7 +219,7 @@ export default function ValePage() {
         </Flex>
 
         <Flex gap={4} direction="row" alignItems={"top"}>
-          <Box flex={2} maxW={"820px"}>
+          <Box flex={2} maxW={"100%"}>
             <InputField
               id="producto"
               type="text"
@@ -238,29 +228,10 @@ export default function ValePage() {
               onKeyDown={handleConfirmacion}
               message={producto.message}
               inputRef={inputRefProducto}
-              height="130px"
+              height="100%"
             />
           </Box>
         </Flex>
-
-        {/* <ButtonCustom
-          onClick={() => {
-            handleSubmit({
-              empleado: inputRefEmpleado.current.value,
-              ordenproduccion: inputRefOrdenProduccion.current.value,
-              producto: inputRefProducto.current.value,
-              // cantidad: inputRefCantidad.current.value,
-            });
-          }}
-          mt={2}
-          visibility={"hidden"}
-          position={"absolute"}
-          top={"0"}
-          length={"0"}
-          zIndex={"-100"}
-        >
-          Confirmar
-        </ButtonCustom> */}
 
         <ListaProductos
           isOpen={isOpenListaProductos}
