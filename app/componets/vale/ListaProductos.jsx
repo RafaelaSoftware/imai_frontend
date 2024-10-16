@@ -21,72 +21,7 @@ import useCustomInput from "@/app/hooks/useCustomInput";
 import { createRef, useEffect, useRef, useState } from "react";
 import InputField from "../inputs/InputField";
 import moment from "moment";
-
-const ItemProducto = ({
-  item,
-  index,
-  inputs,
-  onSubmit,
-  empleado,
-  ordenproduccion,
-}) => {
-  const { isOperario } = useAuth();
-  let inputRefCantidad = inputs[index];
-  const cantidad = useCustomInput(
-    item.cantidad,
-    "cantidad",
-    inputRefCantidad,
-    inputs[index + 1],
-    false
-  );
-
-  useEffect(() => {
-    if (inputRefCantidad != null && index === 0) {
-      inputRefCantidad.current.focus();
-    }
-  }, [inputRefCantidad, index]);
-
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-
-      const canMoveToNextInput = index < inputs.length - 1;
-      const isLastInput = index === inputs.length - 1;
-
-      if (canMoveToNextInput) {
-        cantidad.handleKeyDown(e);
-      } else if (isLastInput) {
-        onSubmit();
-      }
-      item.cantidad = cantidad.value;
-    }
-  };
-
-  return (
-    <Tr>
-      <Td fontSize={isOperario ? "3xl" : "xs"}>
-        {item.producto ? item.producto : item.certificado}
-      </Td>
-      <Td fontSize={isOperario ? "3xl" : "xs"} lineHeight={"30px"}>
-        {item.descripcion}
-      </Td>
-      <Td fontSize={isOperario ? "3xl" : "xs"}>
-        <Box flex={1} maxW={"400px"}>
-          <InputField
-            id="cantidad"
-            type="number"
-            placeholder="Cant"
-            onChange={cantidad.handleChange}
-            onKeyDown={handleKeyDown}
-            message={cantidad.message}
-            inputRef={inputRefCantidad}
-            height="130px"
-          />
-        </Box>
-      </Td>
-    </Tr>
-  );
-};
+import ItemProducto from "./ItemProducto";
 
 export const ListaProductos = ({
   isOpen,
@@ -111,7 +46,6 @@ export const ListaProductos = ({
         cantidad: item.cantidad,
       };
     });
-    console.log(result);
     await onSubmit(result);
     onClose();
   };
@@ -123,6 +57,9 @@ export const ListaProductos = ({
       );
       setList(products);
     }
+    return () => {
+      setList([]);
+    };
   }, [isOpen]);
 
   return (
@@ -136,7 +73,7 @@ export const ListaProductos = ({
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Lista de productos</ModalHeader>
+        <ModalHeader fontSize={"3xl"}>Lista de productos</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           {list.length > 0 && (
@@ -174,7 +111,14 @@ export const ListaProductos = ({
         </ModalBody>
 
         <ModalFooter>
-          <Button mr={3} onClick={onClose}>
+          <Button
+            size={"lg"}
+            fontSize={"5xl"}
+            padding={10}
+            borderRadius={"full"}
+            mr={3}
+            onClick={onClose}
+          >
             Cerrar
           </Button>
           <ButtonCustom maxWidth={"max-content"} onClick={() => handleSubmit()}>
