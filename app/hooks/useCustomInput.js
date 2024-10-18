@@ -21,6 +21,11 @@ const useCustomInput = (
   useEffect(() => {
     setValue(initialValue);
   }, [initialValue]);
+  useEffect(() => {
+    if (inputRef && inputRef.current) {
+      inputRef.current.value = value;
+    };
+  }, [value, inputRef]);
 
   const handleChange = (e) => {
     setValue(e.target.value);
