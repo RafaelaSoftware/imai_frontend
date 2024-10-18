@@ -53,8 +53,11 @@ export default function ValePage() {
   );
 
   const handleSubmit = async (values) => {
-
-
+    if (items.length === 0) {
+      showToast("Error", "Debe agregar al menos un item", "error");
+      changeBackgroundColor("error");
+      return;
+    }
 
     if (values.empleado === "" || values.ordenproduccion === "") {
       showToast("Error", "Todos los campos son obligatorios", "error");
@@ -144,11 +147,30 @@ export default function ValePage() {
   };
 
   const handleConfirmacion = (e) => {
+    if (e.target.value === "" ) {
+      return;
+    }
+
+    if (e.key === "Escape") {
+      e.preventDefault();
+      e.stopPropagation();
+
+      resetValuesRefs();
+      setItems([]);
+
+      showToast("Vale anulado", "Se anulo y reinicio el VALE", "info");
+    }
     if (e.key === "Enter") {
       e.preventDefault();
       e.stopPropagation();
 
       if (e.target.value === "SI") {
+        if (items.length === 0) {
+          showToast("Error", "Debe agregar al menos un item", "error");
+          changeBackgroundColor("error");
+          producto.resetValues();
+          return;
+        }
         onOpenListaProductos();
       } else if (e.target.value === "NO") {
         resetValuesRefs();
@@ -156,8 +178,7 @@ export default function ValePage() {
 
         showToast("Vale anulado", "Se anulo y reinicio el VALE", "info");
       } else {
-        producto.handleKeyDown(e);
-
+        producto.handleKeyDown(e);        
         showToast("Notificación", "Se agrego un producto al VALE", "info");
       }
     }
