@@ -105,14 +105,7 @@ export const ListaProductos = ({
         </ModalBody>
 
         <ModalFooter>
-          <Button
-            size={"lg"}
-            fontSize={"5xl"}
-            padding={10}
-            borderRadius={"full"}
-            mr={3}
-            onClick={onClose}
-          >
+          <Button size={"lg"} borderRadius={"full"} mr={3} onClick={onClose}>
             Cerrar
           </Button>
           <ButtonCustom maxWidth={"max-content"} onClick={() => handleSubmit()}>
