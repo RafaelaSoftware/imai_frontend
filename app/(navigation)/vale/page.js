@@ -202,7 +202,7 @@ export default function ValePage() {
 
   useEffect(() => {
     if (producto.isValid) {
-      const cantidadPrecargada = 0; //Cada vez que ingrese un producto, la cantidad se precarga (setea) en 1.
+      const cantidadPrecargada = "0"; //Cada vez que ingrese un producto, la cantidad se precarga (setea) en 1.
 
       const item = {
         producto: producto.detallesProducto.certificado ? null : producto.detallesProducto.codigo,
