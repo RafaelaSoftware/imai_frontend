@@ -34,9 +34,8 @@ export default function ItemProducto({
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      item.cantidad = cantidad.value;
-
-      if (cantidad.value.includes("NO")) {
+      item.cantidad = String(cantidad.value);
+      if (String(cantidad.value).includes("NO")) {
         reset();
         showToast("Vale anulado", "Se anulo y reinicio el VALE", "info");
         return;
