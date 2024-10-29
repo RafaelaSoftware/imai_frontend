@@ -18,6 +18,7 @@ import ButtonCustom from "../buttons/ButtonCustom";
 import { createRef, useEffect, useRef, useState } from "react";
 import moment from "moment";
 import ItemProducto from "./ItemProducto";
+import { v4 as uuidv4 } from "uuid";
 
 export const ListaProductos = ({
   isOpen,
@@ -87,7 +88,7 @@ export const ListaProductos = ({
                 <Tbody>
                   {list.map((item, index) => (
                     <ItemProducto
-                      key={crypto.randomUUID()}
+                      key={uuidv4()}
                       item={item}
                       index={index}
                       inputs={inputs}
