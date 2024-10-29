@@ -1,4 +1,3 @@
-import { useAuth } from "@/app/libs/AuthProvider";
 import { Box, Input, Text } from "@chakra-ui/react";
 
 export default function InputField({
@@ -11,7 +10,6 @@ export default function InputField({
   inputRef,
   height = "auto"
 }) {
-  const { isOperario } = useAuth();
   return (
     <Box height={height}>
       <Input
@@ -31,11 +29,9 @@ export default function InputField({
         _focus={{
           borderColor: "own",
         }}
-        fontSize={isOperario && "5xl"}
-        padding={isOperario && 10}
       />
 
-      <Text fontSize={isOperario && "3xl"} maxWidth="100%" whiteSpace={"nowrap"} overflow="hidden" textOverflow={"ellipsis"}>{message}</Text>
+      <Text maxWidth="100%" whiteSpace={"nowrap"} overflow="hidden" textOverflow={"ellipsis"}>{message}</Text>
 
     </Box>
   );
