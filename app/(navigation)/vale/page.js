@@ -17,7 +17,7 @@ import moment from "moment";
 import { ListaProductos } from "@/app/componets/vale/ListaProductos";
 
 export default function ValePage() {
-  const { directus, createItem, user, readItems, isOperario } = useAuth();
+  const { directus, createItem, user, readItems } = useAuth();
   const { showToast } = useCustomToast();
   const router = useRouter();
 
@@ -280,17 +280,17 @@ export default function ValePage() {
                   <Table variant="simple">
                     <Thead>
                       <Tr>
-                        <Th fontSize={isOperario ? "3xl" : "xs"}>Cantidad</Th>
-                        <Th fontSize={isOperario ? "3xl" : "xs"} whiteSpace={"nowrap"}>Productos a consumir</Th>
-                        <Th fontSize={isOperario ? "3xl" : "xs"}>Descripción</Th>
+                        <Th fontSize={"xs"}>Cantidad</Th>
+                        <Th fontSize={"xs"} whiteSpace={"nowrap"}>Productos a consumir</Th>
+                        <Th fontSize={"xs"}>Descripción</Th>
                       </Tr>
                     </Thead>
                     <Tbody>
                       {items.sort((a, b) => moment(b.fecha).diff(moment(a.fecha))).map((item, index) => (
                         <Tr key={index}>
-                          <Td fontSize={isOperario ? "3xl" : "xs"}>{item.cantidad}</Td>
-                          <Td fontSize={isOperario ? "3xl" : "xs"}>{item.producto ? item.producto : item.certificado}</Td>
-                          <Td fontSize={isOperario ? "3xl" : "xs"} lineHeight={"30px"}>{item.descripcion}</Td>
+                          <Td fontSize={"xs"}>{item.cantidad}</Td>
+                          <Td fontSize={"xs"}>{item.producto ? item.producto : item.certificado}</Td>
+                          <Td fontSize={"xs"} lineHeight={"30px"}>{item.descripcion}</Td>
                         </Tr>
                       ))}
                     </Tbody>
