@@ -31,6 +31,7 @@ export const ListaProductos = ({
   empleado,
   ordenproduccion,
   producto,
+  reset,
 }) => {
   const { isOperario } = useAuth();
   const [list, setList] = useState([]);
@@ -94,7 +95,7 @@ export const ListaProductos = ({
                 <Tbody>
                   {list.map((item, index) => (
                     <ItemProducto
-                      key={index}
+                      key={crypto.randomUUID()}
                       item={item}
                       index={index}
                       inputs={inputs}
@@ -102,6 +103,7 @@ export const ListaProductos = ({
                       empleado={empleado}
                       ordenproduccion={ordenproduccion}
                       setList={setList}
+                      reset={reset}
                     />
                   ))}
                 </Tbody>

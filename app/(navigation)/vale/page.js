@@ -140,10 +140,18 @@ export default function ValePage() {
     producto.resetValues();
   }
 
+  const resetAllVale = () => {
+    // Permitir ingresar NO en campo de ItemProducto y reiniciar el parte. Y hacer focus en el input empleado.
+    onCloseListaProductos();
+    resetValuesRefs();
+    setItems([]);
+    setTimeout(() => inputRefEmpleado.current.focus(), 300); // Se agrega timeout para que el focus no se pierda. El cual, se pierde si se hace inmediatamente debido al onClose.
+  }
+
   const handleCloseListaProductos = () => {
     onCloseListaProductos();
     producto.resetValues();
-    inputRefProducto.current.focus();
+    setTimeout(() => inputRefProducto.current.focus(), 300);
   };
 
   const handleConfirmacion = (e) => {
@@ -261,6 +269,7 @@ export default function ValePage() {
           productos={items}
           empleado={inputRefEmpleado?.current?.value}
           ordenproduccion={inputRefOrdenProduccion?.current?.value}
+          reset={resetAllVale}
         />
 
         {items.length > 0 && (
