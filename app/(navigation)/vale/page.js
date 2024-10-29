@@ -17,7 +17,7 @@ import moment from "moment";
 import { ListaProductos } from "@/app/componets/vale/ListaProductos";
 
 export default function ValePage() {
-  const { directus, createItem, user, readItems, isOperario } = useAuth();
+  const { directus, createItem, user, readItems } = useAuth();
   const { showToast } = useCustomToast();
   const router = useRouter();
 
@@ -220,8 +220,8 @@ export default function ValePage() {
   return (
     <Box>
       <Flex gap={2} direction="column" alignItems="left">
-        <Flex gap={4} direction="row" alignItems={"top"}>
-          <Box maxW={"50%"}>
+        <Flex gap={2} direction="row" alignItems={"top"}>
+          <Box width={"100%"}>
             <InputField
               id="empleado"
               type="text"
@@ -230,10 +230,9 @@ export default function ValePage() {
               onKeyDown={empleado.handleKeyDown}
               message={empleado.message}
               inputRef={inputRefEmpleado}
-              height="130px"
             />
           </Box>
-          <Box maxW={"50%"}>
+          <Box width={"100%"}>
             <InputField
               id="ordenproduccion"
               type="text"
@@ -242,7 +241,6 @@ export default function ValePage() {
               onKeyDown={ordenproduccion.handleKeyDown}
               message={ordenproduccion.message}
               inputRef={inputRefOrdenProduccion}
-              height="130px"
             />
           </Box>
         </Flex>
@@ -280,17 +278,17 @@ export default function ValePage() {
                   <Table variant="simple">
                     <Thead>
                       <Tr>
-                        <Th fontSize={isOperario ? "3xl" : "xs"}>Cantidad</Th>
-                        <Th fontSize={isOperario ? "3xl" : "xs"} whiteSpace={"nowrap"}>Productos a consumir</Th>
-                        <Th fontSize={isOperario ? "3xl" : "xs"}>Descripción</Th>
+                        <Th fontSize={"xs"}>Cantidad</Th>
+                        <Th fontSize={"xs"} whiteSpace={"nowrap"}>Productos a consumir</Th>
+                        <Th fontSize={"xs"}>Descripción</Th>
                       </Tr>
                     </Thead>
                     <Tbody>
                       {items.sort((a, b) => moment(b.fecha).diff(moment(a.fecha))).map((item, index) => (
                         <Tr key={index}>
-                          <Td fontSize={isOperario ? "3xl" : "xs"}>{item.cantidad}</Td>
-                          <Td fontSize={isOperario ? "3xl" : "xs"}>{item.producto ? item.producto : item.certificado}</Td>
-                          <Td fontSize={isOperario ? "3xl" : "xs"} lineHeight={"30px"}>{item.descripcion}</Td>
+                          <Td fontSize={"xs"}>{item.cantidad}</Td>
+                          <Td fontSize={"xs"}>{item.producto ? item.producto : item.certificado}</Td>
+                          <Td fontSize={"xs"} lineHeight={"30px"}>{item.descripcion}</Td>
                         </Tr>
                       ))}
                     </Tbody>
