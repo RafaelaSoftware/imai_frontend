@@ -123,9 +123,7 @@ export default function ValePage() {
       showToast("Notificación", "Vale creado con éxito", "success");
       changeBackgroundColor("success");
 
-      resetValuesRefs();
-
-      setItems([]);
+      resetAllVale();
     } catch (error) {
       console.log(error);
       showToast("Error", "No se pudo crear el vale", "error");
@@ -145,7 +143,7 @@ export default function ValePage() {
     onCloseListaProductos();
     resetValuesRefs();
     setItems([]);
-    setTimeout(() => inputRefEmpleado.current.focus(), 300); // Se agrega timeout para que el focus no se pierda. El cual, se pierde si se hace inmediatamente debido al onClose.
+    setTimeout(() => inputRefEmpleado.current.focus(), 500); // Se agrega timeout para que el focus no se pierda. El cual, se pierde si se hace inmediatamente debido al onClose.
   }
 
   const handleCloseListaProductos = () => {
