@@ -63,9 +63,11 @@ export default function PartePage() {
       showToast("Notificación", "Parte reiniciado", "info");
       return;
     }
+
     if (!empleado.isValid || !ordenproduccion.isValid || !tarea.isValid) {
       showToast("Error", "Hay campos con errores de validación", "error");
       changeBackgroundColor("error");
+      confirmacion.resetValues();
       return;
     }
 
@@ -77,6 +79,7 @@ export default function PartePage() {
         "error"
       );
       changeBackgroundColor("error");
+      confirmacion.resetValues();
       return;
     }
 
@@ -98,6 +101,7 @@ export default function PartePage() {
         "error"
       );
       changeBackgroundColor("error");
+      confirmacion.resetValues();
       return;
     }
 
@@ -113,6 +117,7 @@ export default function PartePage() {
         "error"
       );
       changeBackgroundColor("error");
+      confirmacion.resetValues();
       return;
     }
 
@@ -154,6 +159,8 @@ export default function PartePage() {
       console.log(error);
       showToast("Error", "No se pudo crear el parte", "error");
       changeBackgroundColor("error");
+      
+      confirmacion.resetValues();
     }
   };
   const handleConfirmacion = (e) => {
@@ -169,10 +176,26 @@ export default function PartePage() {
     }
   }
 
+  const handleCheckIfNOKey = (e, input) => {
+    if (e.key === "Enter") {
+      // si el valor del campo es NO reiniciar
+      // si es dioferente seguir con el handle habitual
+      // no solo se usa en confirmacion, sino en todos los inputs
+
+      if (e.target.value === "NO") {
+        resetValuesRefs();
+        showToast("Notificación", "Parte reiniciado", "info");
+        return;
+      }
+      e.preventDefault();
+      e.stopPropagation();
+      input.handleKeyDown(e);
+    }
+  }
+
   const handleOpAutomatica = async (e) => {
     ordenproduccion.handleKeyDown(e);
   }
-
 
   useEffect(() => {
     if (!user) {
@@ -197,7 +220,7 @@ export default function PartePage() {
           type="text"
           placeholder="Empleado"
           onChange={empleado.handleChange}
-          onKeyDown={empleado.handleKeyDown}
+          onKeyDown={(e) => handleCheckIfNOKey(e, empleado)}          
           message={empleado.message}
           inputRef={inputRefEmpleado}
         />
@@ -207,7 +230,7 @@ export default function PartePage() {
           type="text"
           placeholder="Orden Produccion"
           onChange={ordenproduccion.handleChange}
-          onKeyDown={(e)=>handleOpAutomatica(e)}
+          onKeyDown={(e)=> handleCheckIfNOKey(e, ordenproduccion)}
           message={ordenproduccion.message}
           inputRef={inputRefOrdenProduccion}
         />
@@ -217,7 +240,7 @@ export default function PartePage() {
           type="text"
           placeholder="Tarea"
           onChange={tarea.handleChange}
-          onKeyDown={tarea.handleKeyDown}
+          onKeyDown={(e) => handleCheckIfNOKey(e, tarea)}
           message={tarea.message}
           inputRef={inputRefTarea}
         />
