@@ -8,9 +8,9 @@ import { useEffect, useRef } from "react";
 import useCustomToast from "@/app/hooks/useCustomToast";
 import useCustomInput from "@/app/hooks/useCustomInput";
 import InputField from "@/app/componets/inputs/InputField";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { changeBackgroundColor } from "@/app/libs/utils";
-import moment from 'moment-timezone';
+import moment from "moment-timezone";
 
 export default function FichadaPage() {
   const { directus, createItem, readItems, updateItem, user } = useAuth();
@@ -19,6 +19,8 @@ export default function FichadaPage() {
 
   const inputRefEmpleado = useRef(null);
   const empleado = useCustomInput("", "empleado", inputRefEmpleado, null, true);
+
+  const searchParams = useSearchParams();
 
   const handleSubmit = async (values) => {
     if (values.empleado === "") {
@@ -33,6 +35,8 @@ export default function FichadaPage() {
     }
 
     try {
+      const action = searchParams.get("action"); // Retrieve the query parameter ingreso / egreso
+
       let result;
       result = await directus.request(
         readItems("fichada", {
@@ -40,33 +44,37 @@ export default function FichadaPage() {
             empleado: { _eq: values.empleado },
           },
           limit: 1,
-          sort: ["-ingreso"],
+          sort: ["-date_created"],
         })
-      )
+      );
       // si el empleado ficho en los ultimos 60 segundos, no se puede volver a fichar
       if (result.length > 0) {
         const fichada = result[0];
 
-        let ultimoNovedad = new moment.tz(fichada.egreso ? fichada.egreso : fichada.ingreso, "America/Argentina/Buenos_Aires")
-        ultimoNovedad = ultimoNovedad.subtract(3, 'hours');
-        const ahora = new moment.tz("America/Argentina/Buenos_Aires")
-        const diferencia = ahora.diff(ultimoNovedad, 'seconds');
-        if (diferencia < 60) {
+        let ultimoNovedad = new moment.tz(
+          fichada.egreso ? fichada.egreso : fichada.ingreso,
+          "America/Argentina/Buenos_Aires"
+        );
+        ultimoNovedad = ultimoNovedad.subtract(3, "hours");
+        const ahora = new moment.tz("America/Argentina/Buenos_Aires");
+        const diferencia = ahora.diff(ultimoNovedad, "seconds");
+        if (diferencia < 10) {
           inputRefEmpleado.current.focus();
           empleado.resetValues();
           console.log("No se puede volver a fichar en menos de 60 segundos");
           return;
         }
       }
-      
 
-      const esIngreso = result.length === 0 || result[0].egreso !== null;
+      const esIngreso =
+        action === "ingreso" &&
+        (result.length === 0 || result[0].egreso !== null);
 
       if (esIngreso) {
         result = await directus.request(
           createItem("fichada", {
             empleado: values.empleado,
-            empleado_descripcion: empleado.message, 
+            empleado_descripcion: empleado.message,
             ingreso: new Date().toISOString(),
           })
         );
@@ -98,12 +106,27 @@ export default function FichadaPage() {
           );
         }
 
-        const fichada = result[0];
-        result = await directus.request(
-          updateItem("fichada", fichada.id, {
-            egreso: new Date().toISOString(),
-          })
-        );
+        if (
+          action === "egreso" &&
+          (result.length === 0 || result[0].egreso !== null)
+        ) {
+          // si viene con paramtero egreso, se crea una nueva fichada
+          //cuando: el empleado no tiene fichada abierta
+          result = await directus.request(
+            createItem("fichada", {
+              empleado: values.empleado,
+              empleado_descripcion: empleado.message,
+              egreso: new Date().toISOString(),
+            })
+          );
+        } else {
+          const fichada = result[0];
+          result = await directus.request(
+            updateItem("fichada", fichada.id, {
+              egreso: new Date().toISOString(),
+            })
+          );
+        }
         showToast("Notificación", "Fichada actualizada con éxito", "success");
         changeBackgroundColor("success");
       }

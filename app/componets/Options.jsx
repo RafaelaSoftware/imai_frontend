@@ -11,6 +11,8 @@ export default function Options({ router }) {
     vale: "vale",
     parte: "parte",
     fichada: "fichada",
+    fichadaIngreso: "fichada?action=ingreso",
+    fichadaEgreso: "fichada?action=egreso",
   };
 
   const handleOption = (option) => {
@@ -54,6 +56,24 @@ export default function Options({ router }) {
           }}
         >
           FICHADA INGRESO / EGRESO
+        </ButtonCustom>
+      )}
+      {user.role.permite_crear_fichada && (
+        <ButtonCustom
+          onClick={() => {
+            handleOption(roots.fichadaIngreso);
+          }}
+        >
+          FICHADA INGRESO
+        </ButtonCustom>
+      )}
+      {user.role.permite_crear_fichada && (
+        <ButtonCustom
+          onClick={() => {
+            handleOption(roots.fichadaEgreso);
+          }}
+        >
+          FICHADA EGRESO
         </ButtonCustom>
       )}
       {user.role.permite_crear_parte && (
