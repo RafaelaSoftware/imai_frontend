@@ -18,8 +18,8 @@ export default function FichadaPage() {
   const inputRefEmpleado = useRef(null);
   const empleado = useCustomInput("", "empleado", inputRefEmpleado, null, true);
 
-  const searchParams = typeof window !== "undefined" ? useSearchParams() : null;
-  const action = searchParams ? searchParams.get("action") : null;
+  const searchParams = useSearchParams();
+  const action = typeof window !== "undefined" ? searchParams.get("action") : null;
 
   const handleSubmit = async (values) => {
     if (values.empleado === "") {
