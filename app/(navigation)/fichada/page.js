@@ -59,7 +59,7 @@ export default function FichadaPage() {
         ultimoNovedad = ultimoNovedad.subtract(3, "hours");
         const ahora = new moment.tz("America/Argentina/Buenos_Aires");
         const diferencia = ahora.diff(ultimoNovedad, "seconds");
-        if (diferencia < 10) {
+        if (diferencia < 60) {
           inputRefEmpleado.current.focus();
           empleado.resetValues();
           console.log("No se puede volver a fichar en menos de 60 segundos");
