@@ -10,7 +10,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { changeBackgroundColor } from "@/app/libs/utils";
 import moment from "moment-timezone";
 
-export default function FichadaPage() {
+function FichadaPageContent() {
   const { directus, createItem, readItems, updateItem, user } = useAuth();
   const { showToast } = useCustomToast();
   const router = useRouter();
@@ -154,38 +154,44 @@ export default function FichadaPage() {
   }, [empleado.isValid, empleado.value]);
 
   return (
+    <Box>
+      <Center>
+        <Text fontSize={"lg"} fontWeight="bold">
+          FICHADA
+        </Text>
+      </Center>
+
+      <Flex gap={2} direction="column" alignItems="left">
+        <InputField
+          id="empleado"
+          name="empleado"
+          type="text"
+          placeholder="Empleado"
+          onChange={empleado.handleChange}
+          onKeyDown={empleado.handleKeyDown}
+          message={empleado.message}
+          inputRef={inputRefEmpleado}
+        />
+
+        <ButtonCustom
+          onClick={() => {
+            handleSubmit({
+              empleado: empleado.value,
+            });
+          }}
+          mt={2}
+        >
+          Confirmar
+        </ButtonCustom>
+      </Flex>
+    </Box>
+  );
+}
+
+export default function FichadaPage() {
+  return (
     <Suspense fallback={<Text>Cargando...</Text>}>
-      <Box>
-        <Center>
-          <Text fontSize={"lg"} fontWeight="bold">
-            FICHADA
-          </Text>
-        </Center>
-
-        <Flex gap={2} direction="column" alignItems="left">
-          <InputField
-            id="empleado"
-            name="empleado"
-            type="text"
-            placeholder="Empleado"
-            onChange={empleado.handleChange}
-            onKeyDown={empleado.handleKeyDown}
-            message={empleado.message}
-            inputRef={inputRefEmpleado}
-          />
-
-          <ButtonCustom
-            onClick={() => {
-              handleSubmit({
-                empleado: empleado.value,
-              });
-            }}
-            mt={2}
-          >
-            Confirmar
-          </ButtonCustom>
-        </Flex>
-      </Box>
+      <FichadaPageContent />
     </Suspense>
   );
 }
