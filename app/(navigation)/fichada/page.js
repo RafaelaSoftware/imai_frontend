@@ -10,7 +10,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { changeBackgroundColor } from "@/app/libs/utils";
 import moment from "moment-timezone";
 
-
 export default function FichadaPage() {
   const { directus, createItem, readItems, updateItem, user } = useAuth();
   const { showToast } = useCustomToast();
@@ -19,8 +18,8 @@ export default function FichadaPage() {
   const inputRefEmpleado = useRef(null);
   const empleado = useCustomInput("", "empleado", inputRefEmpleado, null, true);
 
-  const searchParams = useSearchParams();
- const action = searchParams.get("action"); 
+  const searchParams = typeof window !== "undefined" ? useSearchParams() : null;
+  const action = searchParams ? searchParams.get("action") : null;
 
   const handleSubmit = async (values) => {
     if (values.empleado === "") {
