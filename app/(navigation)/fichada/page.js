@@ -1,17 +1,15 @@
-// Assuming you have a user object with properties 'name' and 'lastName'
 "use client";
-
 import { Text, Box, Center, Input, FormControl, Flex } from "@chakra-ui/react";
 import ButtonCustom from "@/app/componets/buttons/ButtonCustom";
 import { useAuth } from "@/app/libs/AuthProvider";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, Suspense } from "react";
 import useCustomToast from "@/app/hooks/useCustomToast";
 import useCustomInput from "@/app/hooks/useCustomInput";
 import InputField from "@/app/componets/inputs/InputField";
 import { useRouter, useSearchParams } from "next/navigation";
 import { changeBackgroundColor } from "@/app/libs/utils";
 import moment from "moment-timezone";
-import { Suspense } from "react";
+
 
 export default function FichadaPage() {
   const { directus, createItem, readItems, updateItem, user } = useAuth();
@@ -22,6 +20,7 @@ export default function FichadaPage() {
   const empleado = useCustomInput("", "empleado", inputRefEmpleado, null, true);
 
   const searchParams = useSearchParams();
+ const action = searchParams.get("action"); 
 
   const handleSubmit = async (values) => {
     if (values.empleado === "") {
@@ -36,7 +35,7 @@ export default function FichadaPage() {
     }
 
     try {
-      const action = searchParams.get("action"); // Retrieve the query parameter ingreso / egreso
+      // Retrieve the query parameter ingreso / egreso
 
       let result;
       result = await directus.request(
