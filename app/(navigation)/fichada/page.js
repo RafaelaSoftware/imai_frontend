@@ -35,8 +35,6 @@ export default function FichadaPage() {
     }
 
     try {
-      // Retrieve the query parameter ingreso / egreso
-
       let result;
       result = await directus.request(
         readItems("fichada", {
