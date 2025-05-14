@@ -11,6 +11,7 @@ import InputField from "@/app/componets/inputs/InputField";
 import { useRouter, useSearchParams } from "next/navigation";
 import { changeBackgroundColor } from "@/app/libs/utils";
 import moment from "moment-timezone";
+import { Suspense } from "react";
 
 export default function FichadaPage() {
   const { directus, createItem, readItems, updateItem, user } = useAuth();
@@ -157,36 +158,38 @@ export default function FichadaPage() {
   }, [empleado.isValid, empleado.value]);
 
   return (
-    <Box>
-      <Center>
-        <Text fontSize={"lg"} fontWeight="bold">
-          FICHADA
-        </Text>
-      </Center>
+    <Suspense fallback={<Text>Cargando...</Text>}>
+      <Box>
+        <Center>
+          <Text fontSize={"lg"} fontWeight="bold">
+            FICHADA
+          </Text>
+        </Center>
 
-      <Flex gap={2} direction="column" alignItems="left">
-        <InputField
-          id="empleado"
-          name="empleado"
-          type="text"
-          placeholder="Empleado"
-          onChange={empleado.handleChange}
-          onKeyDown={empleado.handleKeyDown}
-          message={empleado.message}
-          inputRef={inputRefEmpleado}
-        />
+        <Flex gap={2} direction="column" alignItems="left">
+          <InputField
+            id="empleado"
+            name="empleado"
+            type="text"
+            placeholder="Empleado"
+            onChange={empleado.handleChange}
+            onKeyDown={empleado.handleKeyDown}
+            message={empleado.message}
+            inputRef={inputRefEmpleado}
+          />
 
-        <ButtonCustom
-          onClick={() => {
-            handleSubmit({
-              empleado: empleado.value,
-            });
-          }}
-          mt={2}
-        >
-          Confirmar
-        </ButtonCustom>
-      </Flex>
-    </Box>
+          <ButtonCustom
+            onClick={() => {
+              handleSubmit({
+                empleado: empleado.value,
+              });
+            }}
+            mt={2}
+          >
+            Confirmar
+          </ButtonCustom>
+        </Flex>
+      </Box>
+    </Suspense>
   );
 }
