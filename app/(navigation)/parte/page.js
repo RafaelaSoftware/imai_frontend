@@ -47,6 +47,7 @@ export default function PartePage() {
   };
 
   const handleSubmit = async (values) => {
+    console.log("values", values);
     if (
       values.empleado === "" ||
       values.ordenproduccion === "" ||
@@ -93,7 +94,9 @@ export default function PartePage() {
       })
     );
 
-    const puedeCrearParte = result.length > 0 && result[0].egreso === null;
+    const hoy = new Date().toISOString().split("T")[0];
+    const puedeCrearParte = result.length > 0 && 
+      (result[0].ingreso?.split("T")[0] === hoy || result[0].egreso?.split("T")[0] === hoy);
     if (!puedeCrearParte) {
       showToast(
         "Error",
