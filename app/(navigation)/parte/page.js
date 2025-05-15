@@ -47,7 +47,6 @@ export default function PartePage() {
   };
 
   const handleSubmit = async (values) => {
-    console.log("values", values);
     if (
       values.empleado === "" ||
       values.ordenproduccion === "" ||
