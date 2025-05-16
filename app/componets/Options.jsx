@@ -49,7 +49,7 @@ export default function Options({ router }) {
       flexDirection="column"
       gap={8}
     >
-      {user.role.permite_crear_fichada && (
+      {false && user.role.permite_crear_fichada && (
         <ButtonCustom
           onClick={() => {
             handleOption(roots.fichada);

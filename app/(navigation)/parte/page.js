@@ -89,7 +89,7 @@ export default function PartePage() {
           empleado: { _eq: values.empleado },
         },
         limit: 1,
-        sort: ["-ingreso"],
+        sort: ["-date_created"],
       })
     );
 
