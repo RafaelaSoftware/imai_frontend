@@ -19,7 +19,8 @@ function FichadaPageContent() {
   const empleado = useCustomInput("", "empleado", inputRefEmpleado, null, true);
 
   const searchParams = useSearchParams();
-  const action = typeof window !== "undefined" ? searchParams.get("action") : null;
+  const action =
+    typeof window !== "undefined" ? searchParams.get("action") : null;
 
   const handleSubmit = async (values) => {
     if (values.empleado === "") {
@@ -63,9 +64,7 @@ function FichadaPageContent() {
         }
       }
 
-      const esIngreso =
-        action === "ingreso" &&
-        (result.length === 0 || result[0].egreso !== null);
+      const esIngreso = action === "ingreso";
 
       if (esIngreso) {
         result = await directus.request(
@@ -77,38 +76,18 @@ function FichadaPageContent() {
         );
         showToast("Notificación", "Fichada creada con éxito", "success");
         changeBackgroundColor("success");
-      } else {
-        // si hay un parte abierto, se cierra antes
-        const partesAbiertos = await directus.request(
-          readItems("parte", {
-            filter: {
-              empleado: { _eq: values.empleado },
-            },
-            sort: ["-inicio"],
-            limit: 1,
-          })
-        );
+      }
 
-        if (partesAbiertos.length > 0 && partesAbiertos[0].fin === null) {
-          const parte = partesAbiertos[0];
-          await directus.request(
-            updateItem("parte", parte.id, {
-              fin: new Date().toISOString(),
+      if (!esIngreso) {
+        if (result.length > 0 && result[0].egreso === null) {
+          // si tiene fichada abierta, se actualiza
+          const fichada = result[0];
+          result = await directus.request(
+            updateItem("fichada", fichada.id, {
+              egreso: new Date().toISOString(),
             })
           );
-          showToast(
-            "Notificación",
-            "Parte abierto actualizado con éxito",
-            "success"
-          );
-        }
-
-        if (
-          action === "egreso" &&
-          (result.length === 0 || result[0].egreso !== null)
-        ) {
-          // si viene con paramtero egreso, se crea una nueva fichada
-          //cuando: el empleado no tiene fichada abierta
+        } else {
           result = await directus.request(
             createItem("fichada", {
               empleado: values.empleado,
@@ -116,16 +95,34 @@ function FichadaPageContent() {
               egreso: new Date().toISOString(),
             })
           );
-        } else {
-          const fichada = result[0];
-          result = await directus.request(
-            updateItem("fichada", fichada.id, {
-              egreso: new Date().toISOString(),
-            })
-          );
         }
         showToast("Notificación", "Fichada actualizada con éxito", "success");
         changeBackgroundColor("success");
+      }
+
+      // si hay un parte abierto, se cierra antes
+      const partesAbiertos = await directus.request(
+        readItems("parte", {
+          filter: {
+            empleado: { _eq: values.empleado },
+          },
+          sort: ["-inicio"],
+          limit: 1,
+        })
+      );
+
+      if (partesAbiertos.length > 0 && partesAbiertos[0].fin === null) {
+        const parte = partesAbiertos[0];
+        await directus.request(
+          updateItem("parte", parte.id, {
+            fin: new Date().toISOString(),
+          })
+        );
+        showToast(
+          "Notificación",
+          "Parte abierto actualizado con éxito",
+          "success"
+        );
       }
 
       inputRefEmpleado.current.focus();
