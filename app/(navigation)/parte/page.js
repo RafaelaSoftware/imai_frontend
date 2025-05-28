@@ -58,7 +58,7 @@ export default function PartePage() {
       return;
     }
 
-    if (values.confirmacion === "NO") {
+    if (values.confirmacion && values.confirmacion.toUpperCase().includes("NO")) {
       resetValuesRefs();
       showToast("Notificación", "Parte reiniciado", "info");
       return;
