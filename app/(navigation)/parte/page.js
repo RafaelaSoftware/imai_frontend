@@ -47,6 +47,7 @@ export default function PartePage() {
   };
 
   const handleSubmit = async (values) => {
+
     if (
       values.empleado === "" ||
       values.ordenproduccion === "" ||
@@ -128,6 +129,7 @@ export default function PartePage() {
         filter: {
           empleado: { _eq: values.empleado },
         },
+        sort: ["-inicio"],
         limit: 1,
       })
     );
