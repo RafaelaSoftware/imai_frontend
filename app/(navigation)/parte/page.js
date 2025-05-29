@@ -47,6 +47,8 @@ export default function PartePage() {
   };
 
   const handleSubmit = async (values) => {
+    console.log("handleSubmit", values);
+
     if (
       values.empleado === "" ||
       values.ordenproduccion === "" ||
@@ -92,6 +94,7 @@ export default function PartePage() {
         sort: ["-date_created"],
       })
     );
+    console.log("Fichada result", result);
 
     const hoy = new Date().toISOString().split("T")[0];
     const puedeCrearParte = result.length > 0 && 
@@ -128,9 +131,11 @@ export default function PartePage() {
         filter: {
           empleado: { _eq: values.empleado },
         },
+        sort: ["-inicio"],
         limit: 1,
       })
     );
+    console.log("Ultimo parte", partesAbiertos);
 
     if (partesAbiertos.length > 0 && partesAbiertos[0].fin === null) {
       const parte = partesAbiertos[0];
