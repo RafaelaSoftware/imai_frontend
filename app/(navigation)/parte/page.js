@@ -186,7 +186,7 @@ export default function PartePage() {
       // si es dioferente seguir con el handle habitual
       // no solo se usa en confirmacion, sino en todos los inputs
 
-      if (e.target.value === "NO") {
+      if (e.target.value.toUpperCase().includes("NO")) {
         resetValuesRefs();
         showToast("Notificación", "Parte reiniciado", "info");
         return;
