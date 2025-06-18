@@ -178,7 +178,7 @@ export default function ValePage() {
           return;
         }
         onOpenListaProductos();
-      } else if (e.target.value === "NO") {
+      } else if (e.target.value.toUpperCase().includes("NO")) {
         resetValuesRefs();
         setItems([]);
 
