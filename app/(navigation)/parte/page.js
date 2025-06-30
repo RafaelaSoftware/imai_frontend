@@ -47,6 +47,11 @@ export default function PartePage() {
   };
 
   const handleSubmit = async (values) => {
+    if (values.confirmacion && values.confirmacion.toUpperCase().includes("NO")) {
+      resetValuesRefs();
+      showToast("Notificación", "Parte reiniciado", "info");
+      return;
+    }
 
     if (
       values.empleado === "" ||
@@ -59,11 +64,6 @@ export default function PartePage() {
       return;
     }
 
-    if (values.confirmacion && values.confirmacion.toUpperCase().includes("NO")) {
-      resetValuesRefs();
-      showToast("Notificación", "Parte reiniciado", "info");
-      return;
-    }
 
     if (!empleado.isValid || !ordenproduccion.isValid || !tarea.isValid) {
       showToast("Error", "Hay campos con errores de validación", "error");
