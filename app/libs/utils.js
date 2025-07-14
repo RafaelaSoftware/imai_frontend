@@ -8,7 +8,9 @@ const isLoginModalType = (type) => {
 const isValidData = async (table, data) => {
   // fetch data from api
   const URL = process.env.NEXT_PUBLIC_API_URL;
-  // encodeURIComponent the data to handle special characters
+  // encodeURIComponent the data to handle special character  
+  // clear space and special characters
+  data = data.replace(/ /g, "");
   data = encodeURIComponent(data);
   const response = await fetch(`${URL}/${table}/${data}`).then((res) =>
     res.json()
