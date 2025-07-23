@@ -59,8 +59,8 @@ export default function Navbar() {
     <Box backgroundColor="white" position="relative">
 
       <Container maxW="container.xl">
-        <Flex minWidth="max-content" alignItems="center" gap="2" py="3">
-          <Box>
+        <Flex minWidth="max-content" alignItems="center" gap="2" py="3" position="relative">
+          <Box zIndex={2}>
             <Link href="/">
               <Hide>
                 <Image
@@ -82,8 +82,8 @@ export default function Navbar() {
           </Box>
           <Spacer />
 
-          {/* Hora actual centrada */}
-          <Box flex="1" textAlign="center" fontWeight="bold" fontSize= "4xl">
+          {/* Hora actual centrada absolutamente */}
+          <Box position="absolute" left={0} right={0} top="50%" transform="translateY(-50%)" textAlign="center" fontWeight="bold" fontSize="4xl" zIndex={1} pointerEvents="none">
             {currentTime}
           </Box>
 
