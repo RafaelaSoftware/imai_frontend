@@ -16,7 +16,8 @@ import ButtonLogIn from "@/app/componets/buttons/ButtonLogIn";
 import Link from "next/link";
 
 import UserSession from "@/app/componets/auth/modalUserSession/UserSession";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import moment from "moment-timezone";
 import { LOGIN } from "@/app/enums/AuthModalTypes";
 
 import Image from "next/image";
@@ -24,6 +25,18 @@ import Image from "next/image";
 export default function Navbar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [typeModal, setTypeModal] = useState(LOGIN);
+  const [currentTime, setCurrentTime] = useState("");
+
+  useEffect(() => {
+    const updateTime = () => {
+      setCurrentTime(
+        moment().tz("America/Argentina/Buenos_Aires").format("HH:mm")
+      );
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const overlay = (
     <ModalOverlay backdropFilter="blur(4px)" backgroundColor="white.50" />
@@ -44,6 +57,7 @@ export default function Navbar() {
 
   return (
     <Box backgroundColor="white" position="relative">
+
       <Container maxW="container.xl">
         <Flex minWidth="max-content" alignItems="center" gap="2" py="3">
           <Box>
@@ -52,7 +66,7 @@ export default function Navbar() {
                 <Image
                   src={"/images/logo.svg"}
                   width="100"
-                  height="50"                  
+                  height="50"
                   alt="Logitipo"
                 />
               </Hide>
@@ -60,12 +74,19 @@ export default function Navbar() {
                 <Image
                   src={"/images/logo.svg"}
                   width="100"
-                  height="50"                  
+                  height="50"
                   alt="Logitipo"
                 />
               </Show>
             </Link>
           </Box>
+          <Spacer />
+
+          {/* Hora actual centrada */}
+          <Box flex="1" textAlign="center" fontWeight="bold" fontSize= "4xl">
+            {currentTime}
+          </Box>
+
           <Spacer />
 
           <ButtonGroup gap="2" zIndex={2}>
