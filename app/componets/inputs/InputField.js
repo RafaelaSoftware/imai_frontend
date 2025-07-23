@@ -8,7 +8,7 @@ export default function InputField({
   onKeyDown,
   message,
   inputRef,
-  height = "auto"
+  height = "auto",
 }) {
   return (
     <Box height={height}>
@@ -31,8 +31,16 @@ export default function InputField({
         }}
       />
 
-      <Text maxWidth="100%" whiteSpace={"nowrap"} overflow="hidden" textOverflow={"ellipsis"}>{message}</Text>
-
+      <Text
+        maxWidth="100%"
+        whiteSpace={"nowrap"}
+        overflow="hidden"
+        textOverflow={"ellipsis"}
+        fontSize={"2xl"}
+        fontWeight="bold"
+      >
+        {message}
+      </Text>
     </Box>
   );
 }
