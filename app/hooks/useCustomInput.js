@@ -16,6 +16,7 @@ const useCustomInput = (
   const [inicioTurno, setInicioTurno] = useState("");
   const [tareas, setTareas] = useState([]);
   const [detallesProducto, setDetallesProducto] = useState(null);
+  const [incluyeTarea, setIncluyeTarea] = useState(false);
   const { showToast } = useCustomToast();
 
   useEffect(() => {
@@ -40,6 +41,7 @@ const useCustomInput = (
     setValue("");
     setMessage("");
     setValid(false);
+    setIncluyeTarea(false);
     inputRef.current.value = "";
   };
 
@@ -47,6 +49,8 @@ const useCustomInput = (
     if (e.key === "Enter") {
       e.preventDefault();
       e.stopPropagation();
+
+
 
       if (type === "cantidad") {
         if (value === "") {
@@ -72,7 +76,7 @@ const useCustomInput = (
           if (targetRef) {
             if (result.tarea && result.tarea_descripcion) {
               //Si en PARTE, se selecciona una Orden Produccion, se autocompleta el siguiente campo del formulario (tarea) con el valor del resulado de la API.
-
+              setIncluyeTarea(true);
               targetRef.current.focus();
               targetRef.current.value = result.tarea;
 
@@ -92,6 +96,7 @@ const useCustomInput = (
 
             } else {
               // Si en PARTE, no tiene la repuesta de la API con la tarea y la tarea_descripcion, se sigue el flujo normal.
+              setIncluyeTarea(false);
               targetRef.current.focus();
             }
           }
@@ -133,6 +138,7 @@ const useCustomInput = (
     inicioTurno,
     tareas,
     detallesProducto,
+    incluyeTarea,
   };
 };
 

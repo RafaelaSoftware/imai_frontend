@@ -27,7 +27,13 @@ export default function PartePage() {
     inputRefOrdenProduccion,
     true
   );
-  const tarea = useCustomInput("", "tarea", inputRefTarea, inputRefConfirmacion, true);
+  const tarea = useCustomInput(
+    "",
+    "tarea",
+    inputRefTarea,
+    inputRefConfirmacion,
+    true
+  );
   const ordenproduccion = useCustomInput(
     "",
     "ordenproduccion",
@@ -36,7 +42,13 @@ export default function PartePage() {
     true,
     tarea.setValue
   );
-  const confirmacion = useCustomInput("", "confirmacion", inputRefConfirmacion, null, true);
+  const confirmacion = useCustomInput(
+    "",
+    "confirmacion",
+    inputRefConfirmacion,
+    null,
+    true
+  );
 
   const resetValuesRefs = () => {
     inputRefEmpleado.current.focus();
@@ -47,7 +59,10 @@ export default function PartePage() {
   };
 
   const handleSubmit = async (values) => {
-    if (values.confirmacion && values.confirmacion.toUpperCase().includes("NO")) {
+    if (
+      values.confirmacion &&
+      values.confirmacion.toUpperCase().includes("NO")
+    ) {
       resetValuesRefs();
       showToast("Notificación", "Parte reiniciado", "info");
       return;
@@ -64,7 +79,6 @@ export default function PartePage() {
       return;
     }
 
-
     if (!empleado.isValid || !ordenproduccion.isValid || !tarea.isValid) {
       showToast("Error", "Hay campos con errores de validación", "error");
       changeBackgroundColor("error");
@@ -72,16 +86,18 @@ export default function PartePage() {
       return;
     }
 
-    const esTareaPermitida = empleado.tareas.includes(tarea.value.trim());
-    if (!esTareaPermitida) {
-      showToast(
-        "Error",
-        "Permiso denegado. Tarea no permitida para el empleado",
-        "error"
-      );
-      changeBackgroundColor("error");
-      confirmacion.resetValues();
-      return;
+    if (!ordenproduccion.incluyeTarea) {
+      const esTareaPermitida = empleado.tareas.includes(tarea.value.trim());
+      if (!esTareaPermitida) {
+        showToast(
+          "Error",
+          "Permiso denegado. Tarea no permitida para el empleado",
+          "error"
+        );
+        changeBackgroundColor("error");
+        confirmacion.resetValues();
+        return;
+      }
     }
 
     const result = await directus.request(
@@ -95,8 +111,10 @@ export default function PartePage() {
     );
 
     const hoy = new Date().toISOString().split("T")[0];
-    const puedeCrearParte = result.length > 0 && 
-      (result[0].ingreso?.split("T")[0] === hoy || result[0].egreso?.split("T")[0] === hoy);
+    const puedeCrearParte =
+      result.length > 0 &&
+      (result[0].ingreso?.split("T")[0] === hoy ||
+        result[0].egreso?.split("T")[0] === hoy);
     if (!puedeCrearParte) {
       showToast(
         "Error",
@@ -163,7 +181,7 @@ export default function PartePage() {
       console.log(error);
       showToast("Error", "No se pudo crear el parte", "error");
       changeBackgroundColor("error");
-      
+
       confirmacion.resetValues();
     }
   };
@@ -178,7 +196,7 @@ export default function PartePage() {
         confirmacion: confirmacion.value,
       });
     }
-  }
+  };
 
   const handleCheckIfNOKey = (e, input) => {
     if (e.key === "Enter") {
@@ -195,11 +213,11 @@ export default function PartePage() {
       e.stopPropagation();
       input.handleKeyDown(e);
     }
-  }
+  };
 
   const handleOpAutomatica = async (e) => {
     ordenproduccion.handleKeyDown(e);
-  }
+  };
 
   useEffect(() => {
     if (!user) {
@@ -224,7 +242,7 @@ export default function PartePage() {
           type="text"
           placeholder="Empleado"
           onChange={empleado.handleChange}
-          onKeyDown={(e) => handleCheckIfNOKey(e, empleado)}          
+          onKeyDown={(e) => handleCheckIfNOKey(e, empleado)}
           message={empleado.message}
           inputRef={inputRefEmpleado}
         />
@@ -234,7 +252,7 @@ export default function PartePage() {
           type="text"
           placeholder="Orden Produccion"
           onChange={ordenproduccion.handleChange}
-          onKeyDown={(e)=> handleCheckIfNOKey(e, ordenproduccion)}
+          onKeyDown={(e) => handleCheckIfNOKey(e, ordenproduccion)}
           message={ordenproduccion.message}
           inputRef={inputRefOrdenProduccion}
         />
