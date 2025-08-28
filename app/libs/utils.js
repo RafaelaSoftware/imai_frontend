@@ -71,7 +71,7 @@ const isValidData = async (table, data) => {
 const changeBackgroundColor = (type) => {
   const color = type === "success" ? "lightgreen" : "lightcoral";
 
-  const originalBackgroundColor = document.body.style.backgroundColor;
+  const originalBackgroundColor = "#fff"; 
   document.body.style.backgroundColor = color;
   setTimeout(() => {
     document.body.style.backgroundColor = originalBackgroundColor;
